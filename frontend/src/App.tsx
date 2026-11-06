@@ -41,6 +41,38 @@ type SavedState = {
 const DEFAULT_SKILLS = ['HTML', 'CSS', 'JavaScript', 'Python', 'Git']
 const PROFICIENCY_LEVELS: SkillProficiency[] = ['Beginner', 'Intermediate', 'Advanced']
 
+// A selected skill contributes according to the user's self-reported proficiency.
+// A missing required skill contributes zero. All required skills are equally
+// weighted in this first scoring iteration.
+const PROFICIENCY_WEIGHT: Record<SkillProficiency, number> = {
+  Beginner: 0.35,
+  Intermediate: 0.7,
+  Advanced: 1,
+}
+
+function calculateWeightedReadiness(
+  requiredSkills: string[],
+  selectedSkills: string[],
+  proficiencies: Record<string, SkillProficiency>,
+): number {
+  if (requiredSkills.length === 0) return 0
+
+  const selectedByLowercase = new Map(
+    selectedSkills.map((skill) => [skill.toLowerCase(), skill]),
+  )
+
+  const totalWeight = requiredSkills.reduce((total, requiredSkill) => {
+    const selectedSkill = selectedByLowercase.get(requiredSkill.toLowerCase())
+    if (!selectedSkill) return total
+
+    const level = proficiencies[selectedSkill] ?? 'Beginner'
+    return total + PROFICIENCY_WEIGHT[level]
+  }, 0)
+
+  return Math.round((totalWeight / requiredSkills.length) * 100)
+}
+
+
 function readSavedState(): SavedState {
   if (typeof window === 'undefined') return {}
   try {
@@ -95,7 +127,7 @@ function App() {
   const required = careerSkills[target]
   const matched = apiResult ? apiResult.matched_skills : required.filter((skill) => selectedSkills.some((s) => s.toLowerCase() === skill.toLowerCase()))
   const gaps = apiResult ? apiResult.skill_gaps.map((g) => g.skill) : required.filter((skill) => !matched.includes(skill))
-  const readiness = apiResult ? apiResult.readiness_score : Math.round((matched.length / required.length) * 100)
+  const readiness = calculateWeightedReadiness(required, selectedSkills, skillProficiencies)
   const completedTasks = tasks.filter((task) => task.done).length
   const progress = Math.round((completedTasks / tasks.length) * 100)
 
@@ -174,7 +206,7 @@ function App() {
             <div className="welcome-row"><div><div className="eyebrow">YOUR CAREER, REIMAGINED</div><h1>Make your next move <em>with confidence.</em></h1><p className="subheading">A clear bridge from where you are to where you want to be.</p></div><button className="primary-button" onClick={() => setTab('Career assessment')}>✦ {assessmentDone ? 'Update assessment' : 'Start assessment'} <span>→</span></button></div>
             <div className="hero-card"><div className="hero-copy"><span className="tag">YOUR CAREER BRIDGE</span><h2>{assessmentDone ? `Your path to ${target}` : 'Your next chapter is closer than you think.'}</h2><p>{assessmentDone ? `You have identified ${matched.length} matching skills. Build the missing skills one step at a time.` : 'Discover the skills you already have, identify what you need next, and turn your ambition into an actionable plan.'}</p><button className="light-button" onClick={() => setTab('Career assessment')}>{assessmentDone ? 'Review my results' : 'Build my career plan'} <span>→</span></button></div><div className="hero-art"><div className="orbit orbit-one" /><div className="orbit orbit-two" /><div className="art-core">✦</div><div className="float-card card-top">↗ <span>New possibilities</span></div><div className="float-card card-bottom"><span className="mini-check">✓</span><span>Skills that transfer</span></div></div></div>
             <div className="section-heading"><div><h2>Your career snapshot</h2><p>A quick look at your progress so far.</p></div><span className="muted-label">UPDATED JUST NOW</span></div>
-            <div className="stats-grid"><div className="stat-card"><div className="stat-top"><span>Career readiness</span><span className="stat-symbol purple">◉</span></div><div className="stat-value">{assessmentDone ? readiness : '—'}<small>{assessmentDone ? '%' : 'Start assessment'}</small></div><div className="progress-track"><div style={{ width: `${assessmentDone ? readiness : 0}%` }} /></div><p>{assessmentDone ? 'Based on skills you selected' : 'Complete your assessment to calculate'}</p></div><div className="stat-card"><div className="stat-top"><span>Transferable skills</span><span className="stat-symbol green">↗</span></div><div className="stat-value">{assessmentDone ? matched.length : selectedSkills.length}<small> identified</small></div><p className="positive">Skills you can build on</p></div><div className="stat-card"><div className="stat-top"><span>Skills to develop</span><span className="stat-symbol orange">⌁</span></div><div className="stat-value">{assessmentDone ? gaps.length : '—'}<small> priority areas</small></div><p>Focus on the highest-impact gaps first</p></div><div className="stat-card"><div className="stat-top"><span>Roadmap progress</span><span className="stat-symbol blue">↗</span></div><div className="stat-value">{progress}<small>%</small></div><div className="progress-track blue-track"><div style={{ width: `${progress}%` }} /></div><p>{completedTasks} of {tasks.length} milestones completed</p></div></div>
+            <div className="stats-grid"><div className="stat-card"><div className="stat-top"><span>Career readiness</span><span className="stat-symbol purple">◉</span></div><div className="stat-value">{assessmentDone ? readiness : '—'}<small>{assessmentDone ? '%' : 'Start assessment'}</small></div><div className="progress-track"><div style={{ width: `${assessmentDone ? readiness : 0}%` }} /></div><p>{assessmentDone ? 'Weighted by your reported proficiency' : 'Complete your assessment to calculate'}</p></div><div className="stat-card"><div className="stat-top"><span>Transferable skills</span><span className="stat-symbol green">↗</span></div><div className="stat-value">{assessmentDone ? matched.length : selectedSkills.length}<small> identified</small></div><p className="positive">Skills you can build on</p></div><div className="stat-card"><div className="stat-top"><span>Skills to develop</span><span className="stat-symbol orange">⌁</span></div><div className="stat-value">{assessmentDone ? gaps.length : '—'}<small> priority areas</small></div><p>Focus on the highest-impact gaps first</p></div><div className="stat-card"><div className="stat-top"><span>Roadmap progress</span><span className="stat-symbol blue">↗</span></div><div className="stat-value">{progress}<small>%</small></div><div className="progress-track blue-track"><div style={{ width: `${progress}%` }} /></div><p>{completedTasks} of {tasks.length} milestones completed</p></div></div>
             <div className="bottom-grid"><section className="panel"><div className="panel-heading"><div><h3>Your next best action</h3><p>One small step. Meaningful momentum.</p></div><span className="sparkle">✦</span></div><div className="action-row"><div className="action-icon">⌘</div><div className="action-text"><span className="tag soft-tag">RECOMMENDED FOR YOU</span><h4>{assessmentDone ? `Learn ${gaps[0] ?? 'build your portfolio'}` : 'Complete your career assessment'}</h4><p>{assessmentDone ? `Spend 30 minutes practising ${gaps[0] ?? 'your project idea'} today.` : 'Tell us about your background and destination role to personalise your plan.'}</p></div><button className="arrow-button" onClick={() => setTab(assessmentDone ? 'Skill gaps' : 'Career assessment')}>→</button></div></section><section className="panel quote-panel"><div className="quote-mark">“</div><p>Your past experience isn't a detour. It's part of the bridge to what's next.</p><span>YOUR CAREER JOURNEY, YOUR WAY</span><div className="quote-decoration">✳</div></section></div>
           </>}
 
