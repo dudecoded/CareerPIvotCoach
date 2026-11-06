@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import './index.css'
 import { saveAssessment, type AssessmentResult } from './api'
 
+type SkillProficiency = 'Beginner' | 'Intermediate' | 'Advanced'
 type Career = 'Data Analyst' | 'Frontend Developer' | 'Backend Developer' | 'ML Engineer' | 'Product Manager' | 'UI/UX Designer'
 type Tab = 'Overview' | 'Career assessment' | 'Skill gaps' | 'Roadmap' | 'Career paths' | 'AI coach'
 
@@ -30,11 +31,15 @@ type SavedState = {
   target?: Career
   experience?: string
   selectedSkills?: string[]
+  skillProficiencies?: Record<string, SkillProficiency>
   goal?: string
   assessmentDone?: boolean
   tasks?: typeof initialTasks
   chat?: { role: 'user' | 'coach'; text: string }[]
 }
+
+const DEFAULT_SKILLS = ['HTML', 'CSS', 'JavaScript', 'Python', 'Git']
+const PROFICIENCY_LEVELS: SkillProficiency[] = ['Beginner', 'Intermediate', 'Advanced']
 
 function readSavedState(): SavedState {
   if (typeof window === 'undefined') return {}
@@ -46,13 +51,27 @@ function readSavedState(): SavedState {
   }
 }
 
+function getInitialSkillProficiencies(): Record<string, SkillProficiency> {
+  const saved = readSavedState()
+  const stored = saved.skillProficiencies ?? {}
+  const skills = saved.selectedSkills ?? DEFAULT_SKILLS
+
+  return Object.fromEntries(
+    skills.map((skill) => [
+      skill,
+      PROFICIENCY_LEVELS.includes(stored[skill] as SkillProficiency) ? stored[skill] as SkillProficiency : 'Beginner',
+    ]),
+  ) as Record<string, SkillProficiency>
+}
+
 function App() {
   const [tab, setTab] = useState<Tab>('Overview')
   const [name, setName] = useState(() => readSavedState().name ?? 'Uzair')
   const [currentRole, setCurrentRole] = useState(() => readSavedState().currentRole ?? 'Student')
   const [target, setTarget] = useState<Career>(() => readSavedState().target ?? 'Frontend Developer')
   const [experience, setExperience] = useState(() => readSavedState().experience ?? 'Beginner')
-  const [selectedSkills, setSelectedSkills] = useState<string[]>(() => readSavedState().selectedSkills ?? ['HTML', 'CSS', 'JavaScript', 'Python', 'Git'])
+  const [selectedSkills, setSelectedSkills] = useState<string[]>(() => readSavedState().selectedSkills ?? DEFAULT_SKILLS)
+  const [skillProficiencies, setSkillProficiencies] = useState<Record<string, SkillProficiency>>(getInitialSkillProficiencies)
   const [goal, setGoal] = useState(() => readSavedState().goal ?? 'Get internship-ready')
   const [assessmentDone, setAssessmentDone] = useState(() => readSavedState().assessmentDone ?? false)
   const [tasks, setTasks] = useState(() => readSavedState().tasks ?? initialTasks)
@@ -65,13 +84,13 @@ function App() {
   ])
 
   useEffect(() => {
-    const saved: SavedState = { name, currentRole, target, experience, selectedSkills, goal, assessmentDone, tasks, chat }
+    const saved: SavedState = { name, currentRole, target, experience, selectedSkills, skillProficiencies, goal, assessmentDone, tasks, chat }
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(saved))
     } catch (error) {
       console.warn('CareerPivotCoach could not save data in this browser.', error)
     }
-  }, [name, currentRole, target, experience, selectedSkills, goal, assessmentDone, tasks, chat])
+  }, [name, currentRole, target, experience, selectedSkills, skillProficiencies, goal, assessmentDone, tasks, chat])
 
   const required = careerSkills[target]
   const matched = apiResult ? apiResult.matched_skills : required.filter((skill) => selectedSkills.some((s) => s.toLowerCase() === skill.toLowerCase()))
@@ -93,7 +112,18 @@ function App() {
   }, [target])
 
   function toggleSkill(skill: string) {
-    setSelectedSkills((current) => current.includes(skill) ? current.filter((item) => item !== skill) : [...current, skill])
+    if (selectedSkills.includes(skill)) {
+      setSelectedSkills((current) => current.filter((item) => item !== skill))
+      setSkillProficiencies((current) => {
+        const next = { ...current }
+        delete next[skill]
+        return next
+      })
+      return
+    }
+
+    setSelectedSkills((current) => [...current, skill])
+    setSkillProficiencies((current) => ({ ...current, [skill]: 'Beginner' }))
   }
 
   function sendMessage() {
@@ -148,7 +178,36 @@ function App() {
             <div className="bottom-grid"><section className="panel"><div className="panel-heading"><div><h3>Your next best action</h3><p>One small step. Meaningful momentum.</p></div><span className="sparkle">✦</span></div><div className="action-row"><div className="action-icon">⌘</div><div className="action-text"><span className="tag soft-tag">RECOMMENDED FOR YOU</span><h4>{assessmentDone ? `Learn ${gaps[0] ?? 'build your portfolio'}` : 'Complete your career assessment'}</h4><p>{assessmentDone ? `Spend 30 minutes practising ${gaps[0] ?? 'your project idea'} today.` : 'Tell us about your background and destination role to personalise your plan.'}</p></div><button className="arrow-button" onClick={() => setTab(assessmentDone ? 'Skill gaps' : 'Career assessment')}>→</button></div></section><section className="panel quote-panel"><div className="quote-mark">“</div><p>Your past experience isn't a detour. It's part of the bridge to what's next.</p><span>YOUR CAREER JOURNEY, YOUR WAY</span><div className="quote-decoration">✳</div></section></div>
           </>}
 
-          {tab === 'Career assessment' && <><div className="page-intro"><div className="eyebrow">STEP 1 · KNOW YOUR STARTING POINT</div><h1>Let's map your <em>next move.</em></h1><p>Share a little about yourself. We'll use it to build a practical transition plan.</p></div><section className="panel form-panel"><div className="form-section-title"><span>01</span><div><h3>Your background</h3><p>Start with where you are today.</p></div></div><div className="form-grid"><label>Your name<input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" /></label><label>Current role or background<input value={currentRole} onChange={(e) => setCurrentRole(e.target.value)} placeholder="e.g. Student, teacher, developer" /></label><label>Experience level<select value={experience} onChange={(e) => setExperience(e.target.value)}><option>Beginner</option><option>Some experience</option><option>Experienced</option></select></label><label>What is your main goal?<select value={goal} onChange={(e) => setGoal(e.target.value)}><option>Get internship-ready</option><option>Switch careers</option><option>Get my first job</option><option>Grow in my current field</option></select></label></div><div className="divider" /><div className="form-section-title"><span>02</span><div><h3>Choose your destination</h3><p>Which role would you like to work towards?</p></div></div><div className="career-choice-grid">{(Object.keys(careerSkills) as Career[]).map((career) => <button key={career} className={`career-choice ${target === career ? 'chosen' : ''}`} onClick={() => setTarget(career)}><span className="choice-icon">{career === 'Data Analyst' ? '◈' : career === 'Frontend Developer' ? '⌘' : career === 'Backend Developer' ? '⌁' : career === 'ML Engineer' ? '✳' : career === 'Product Manager' ? '◇' : '◈'}</span><span><strong>{career}</strong><small>{careerSkills[career].slice(0, 3).join(' · ')}</small></span><span className="radio">{target === career ? '✓' : ''}</span></button>)}</div><div className="divider" /><div className="form-section-title"><span>03</span><div><h3>Skills you already have</h3><p>Select everything you feel comfortable with. You can change this later.</p></div></div><div className="skill-picker">{allSkills.map((skill) => <button key={skill} className={`skill-chip ${selectedSkills.includes(skill) ? 'selected' : ''}`} onClick={() => toggleSkill(skill)}>{selectedSkills.includes(skill) ? '✓ ' : '+ '}{skill}</button>)}</div><div className="form-footer"><span>Your data stays in this browser for this demo.</span><button className="primary-button" onClick={async () => { setApiLoading(true); setApiError(''); try { const result = await saveAssessment({ current_role: currentRole, target_role: target === 'ML Engineer' ? 'Machine Learning Engineer' : target, experience_years: experience === 'Beginner' ? 0 : experience === 'Some experience' ? 2 : 5, skills: selectedSkills.map(s => s.toLowerCase()) }); setApiResult(result); setAssessmentDone(true); setTasks(result.roadmap.map(phase => ({ phase: phase.period, title: phase.title, detail: phase.tasks.map(t => t.task).join(' · '), done: false }))); setTab('Skill gaps'); } catch (e) { setApiError(e instanceof Error ? e.message : 'Could not connect to backend'); } finally { setApiLoading(false); } }}>Generate my career bridge <span>→</span></button></div></section></>}
+          {tab === 'Career assessment' && <><div className="page-intro"><div className="eyebrow">STEP 1 · KNOW YOUR STARTING POINT</div><h1>Let's map your <em>next move.</em></h1><p>Share a little about yourself. We'll use it to build a practical transition plan.</p></div><section className="panel form-panel"><div className="form-section-title"><span>01</span><div><h3>Your background</h3><p>Start with where you are today.</p></div></div><div className="form-grid"><label>Your name<input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" /></label><label>Current role or background<input value={currentRole} onChange={(e) => setCurrentRole(e.target.value)} placeholder="e.g. Student, teacher, developer" /></label><label>Experience level<select value={experience} onChange={(e) => setExperience(e.target.value)}><option>Beginner</option><option>Some experience</option><option>Experienced</option></select></label><label>What is your main goal?<select value={goal} onChange={(e) => setGoal(e.target.value)}><option>Get internship-ready</option><option>Switch careers</option><option>Get my first job</option><option>Grow in my current field</option></select></label></div><div className="divider" /><div className="form-section-title"><span>02</span><div><h3>Choose your destination</h3><p>Which role would you like to work towards?</p></div></div><div className="career-choice-grid">{(Object.keys(careerSkills) as Career[]).map((career) => <button key={career} className={`career-choice ${target === career ? 'chosen' : ''}`} onClick={() => setTarget(career)}><span className="choice-icon">{career === 'Data Analyst' ? '◈' : career === 'Frontend Developer' ? '⌘' : career === 'Backend Developer' ? '⌁' : career === 'ML Engineer' ? '✳' : career === 'Product Manager' ? '◇' : '◈'}</span><span><strong>{career}</strong><small>{careerSkills[career].slice(0, 3).join(' · ')}</small></span><span className="radio">{target === career ? '✓' : ''}</span></button>)}</div><div className="divider" /><div className="form-section-title"><span>03</span><div><h3>Skills you already have</h3><p>Select everything you feel comfortable with. You can change this later.</p></div></div><div className="skill-picker">{allSkills.map((skill) => {
+              const isSelected = selectedSkills.includes(skill)
+              return (
+                <div className={`skill-option ${isSelected ? 'selected' : ''}`} key={skill}>
+                  <button
+                    type="button"
+                    className={`skill-chip ${isSelected ? 'selected' : ''}`}
+                    onClick={() => toggleSkill(skill)}
+                    aria-pressed={isSelected}
+                  >
+                    {isSelected ? '✓ ' : '+ '}{skill}
+                  </button>
+                  {isSelected && (
+                    <select
+                      className="proficiency-select"
+                      aria-label={`${skill} proficiency`}
+                      value={skillProficiencies[skill] ?? 'Beginner'}
+                      onChange={(event) => setSkillProficiencies((current) => ({
+                        ...current,
+                        [skill]: event.target.value as SkillProficiency,
+                      }))}
+                    >
+                      {PROFICIENCY_LEVELS.map((level) => (
+                        <option key={level} value={level}>{level}</option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+              )
+            })}</div><div className="form-footer"><span>Your data stays in this browser for this demo.</span><button className="primary-button" onClick={async () => { setApiLoading(true); setApiError(''); try { const result = await saveAssessment({ current_role: currentRole, target_role: target === 'ML Engineer' ? 'Machine Learning Engineer' : target, experience_years: experience === 'Beginner' ? 0 : experience === 'Some experience' ? 2 : 5, skills: selectedSkills.map(s => s.toLowerCase()) }); setApiResult(result); setAssessmentDone(true); setTasks(result.roadmap.map(phase => ({ phase: phase.period, title: phase.title, detail: phase.tasks.map(t => t.task).join(' · '), done: false }))); setTab('Skill gaps'); } catch (e) { setApiError(e instanceof Error ? e.message : 'Could not connect to backend'); } finally { setApiLoading(false); } }}>Generate my career bridge <span>→</span></button></div></section></>}
 
           {tab === 'Skill gaps' && <><div className="page-intro"><div className="eyebrow">YOUR CAREER BRIDGE</div><h1>See what connects you <em>to your goal.</em></h1><p>{apiResult?.recommendation ?? ''} Your analysis is based on the skills you selected—not a prediction of hiring outcomes.</p></div>{!assessmentDone && <div className="notice">Your results are a starting point. <button onClick={() => setTab('Career assessment')}>Complete the assessment →</button></div>}<div className="analysis-grid"><section className="panel readiness-panel"><div className="panel-heading"><div><h3>Skill coverage</h3><p>{target} · {matched.length} of {required.length} target skills matched</p></div><span className="tag">ESTIMATE</span></div><div className="score-circle" style={{ '--score': `${assessmentDone ? readiness : 0}%` } as React.CSSProperties}><div><strong>{assessmentDone ? readiness : 0}%</strong><span>coverage</span></div></div><p className="center-note">{apiResult?.score_note ?? 'This score measures selected-skill coverage only. It is not a job-readiness or employment prediction.'}</p></section><section className="panel"><div className="panel-heading"><div><h3>Skills you can build on</h3><p>Existing skills that overlap with your target.</p></div><span className="count-badge green-count">{matched.length}</span></div><div className="skill-list">{matched.length ? matched.map((skill) => <div className="skill-line" key={skill}><span className="skill-status matched">✓</span><div><strong>{skill}</strong><small>Selected as an existing skill</small></div><span className="level-label">MATCH</span></div>) : <p className="empty-note">Complete the assessment and select some existing skills.</p>}</div></section><section className="panel gap-panel"><div className="panel-heading"><div><h3>Priority skills to develop</h3><p>Target skills you haven't selected yet.</p></div><span className="count-badge orange-count">{gaps.length}</span></div><div className="skill-list">{gaps.map((skill, index) => <div className="skill-line" key={skill}><span className="skill-status gap">{index + 1}</span><div><strong>{skill}</strong><small>{index === 0 ? 'Start here · first priority' : 'Add to your learning plan'}</small></div><button className="tiny-button" onClick={() => toggleSkill(skill)}>Mark learned</button></div>)}</div></section><section className="panel project-panel"><span className="tag soft-tag">PUT IT INTO PRACTICE</span><h3>Build proof, not just knowledge.</h3><p>A portfolio project helps you practise several skills together and gives you something concrete to discuss.</p><div className="project-suggestion"><span className="project-icon">✦</span><div><strong>{suggestedProject}</strong><small>Suggested starter project for {target}</small></div></div><button className="text-button" onClick={() => setTab('Roadmap')}>Add to my roadmap →</button></section></div></>}
 
