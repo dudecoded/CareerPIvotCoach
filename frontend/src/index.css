@@ -19,3 +19,19 @@
 .skill-option .skill-chip.selected{background:transparent;color:#7250d1}
 .proficiency-select{max-width:112px;border:1px solid #ded5f4;border-radius:15px;background:#fff;color:#68558f;padding:5px 7px;font-size:9px;cursor:pointer}
 .proficiency-select:focus{outline:2px solid #c8b9ff;outline-offset:1px}
+
+/* Career tools */
+.resume-textarea{width:100%;min-height:260px;resize:vertical;border:1px solid #e9e7f0;border-radius:10px;padding:14px;background:#fff;color:#46415f;font:12px/1.7 'DM Sans',sans-serif;outline:none}
+.resume-textarea:focus{border-color:#a28ae9;box-shadow:0 0 0 3px #f2edff}
+.resume-results{margin-top:16px}
+.resume-results h3{font:700 14px Manrope,sans-serif;margin:0 0 10px}
+.resume-results h3:not(:first-child){margin-top:22px}
+.review-list{padding-left:18px;color:#77718f;font-size:11px;line-height:1.8}
+.review-list li{margin:7px 0}
+.interview-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px}
+.interview-card .eyebrow{display:block;margin-bottom:12px}
+.interview-card h3{font:700 15px/1.5 Manrope,sans-serif;color:#39344f;margin:0 0 12px}
+.interview-card p{font-size:11px;line-height:1.7;color:#89859b}
+button:disabled{opacity:.55;cursor:not-allowed}
+.chat-error{padding:10px 20px;color:#a34e4e;font-size:10px}
+@media(max-width:760px){.interview-grid{grid-template-columns:1fr}.resume-textarea{min-height:220px}}
