@@ -7,6 +7,7 @@ class AssessmentCreate(BaseModel):
     target_role: str = Field(min_length=1, max_length=120)
     experience_years: float = Field(default=0, ge=0, le=60)
     skills: list[str] = Field(default_factory=list, max_length=100)
+    skill_proficiencies: dict[str, str] = Field(default_factory=dict)
 
 
 class SkillGap(BaseModel):
