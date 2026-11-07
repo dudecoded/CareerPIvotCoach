@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Search, Sun, Moon, Github, Chrome, UserRound, ArrowRight, Sparkles, X, LockKeyhole } from 'lucide-react'
 import './index.css'
 import { saveAssessment, sendCoachMessage, reviewResume, generateInterviewPrep, getAssessmentHistory, type AssessmentResult, type ResumeReviewResult, type InterviewPrepResult } from './api'
 
@@ -98,6 +99,12 @@ function getInitialSkillProficiencies(): Record<string, SkillProficiency> {
 
 function App() {
   const [tab, setTab] = useState<Tab>('Overview')
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => (localStorage.getItem('cpc-theme') as 'light' | 'dark') || 'light')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchOpen, setSearchOpen] = useState(false)
+  const [authOpen, setAuthOpen] = useState(false)
+  const [authMode, setAuthMode] = useState<'login' | 'signup'>('login')
+  const [authMessage, setAuthMessage] = useState('')
   const [name, setName] = useState(() => readSavedState().name ?? 'Uzair')
   const [currentRole, setCurrentRole] = useState(() => readSavedState().currentRole ?? 'Student')
   const [target, setTarget] = useState<Career>(() => readSavedState().target ?? 'Frontend Developer')
@@ -126,6 +133,11 @@ function App() {
   const [chat, setChat] = useState<{ role: 'user' | 'coach'; text: string }[]>(() => readSavedState().chat ?? [
     { role: 'coach', text: 'Hi! I can help you turn your career goal into practical next steps. Complete your assessment to get more tailored guidance.' },
   ])
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme
+    localStorage.setItem('cpc-theme', theme)
+  }, [theme])
 
   useEffect(() => {
     const saved: SavedState = { name, currentRole, target, experience, selectedSkills, skillProficiencies, goal, assessmentDone, tasks, chat }
@@ -219,7 +231,7 @@ function App() {
       </aside>
 
       <main className="main-area">
-        <header className="topbar"><div className="breadcrumb">Workspace <span>/</span> <strong>{tab}</strong></div><div className="top-actions"><span className="demo-pill"><span /> Local workspace</span><button
+        <header className="topbar"><div className="breadcrumb">Workspace <span>/</span> <strong>{tab}</strong></div><div className="top-actions"><div className="global-search"><Search size={16}/><input aria-label="Search CareerPivotCoach" placeholder="Search skills, tools, careers…" value={searchQuery} onFocus={() => setSearchOpen(true)} onChange={(event) => { setSearchQuery(event.target.value); setSearchOpen(true) }} onKeyDown={(event) => { if (event.key === 'Escape') setSearchOpen(false) }} />{searchQuery && <button className="search-clear" onClick={() => { setSearchQuery(''); setSearchOpen(false) }} aria-label="Clear search"><X size={14}/></button>}{searchOpen && searchQuery.trim() && <div className="search-results">{tabs.filter((item) => item.toLowerCase().includes(searchQuery.toLowerCase())).slice(0,4).map((item) => <button key={item} onClick={() => { setTab(item); setSearchOpen(false); setSearchQuery('') }}><span className="search-result-icon">↗</span><span><strong>{item}</strong><small>Open workspace section</small></span><ArrowRight size={14}/></button>)}{allSkills.filter((skill) => skill.toLowerCase().includes(searchQuery.toLowerCase())).slice(0,4).map((skill) => <button key={skill} onClick={() => { setTab('Career assessment'); if (!selectedSkills.includes(skill)) toggleSkill(skill); setSearchOpen(false); setSearchQuery('') }}><span className="search-result-icon">✳</span><span><strong>{skill}</strong><small>Skill · add or review</small></span><ArrowRight size={14}/></button>)}{(tabs.filter((item) => item.toLowerCase().includes(searchQuery.toLowerCase())).length + allSkills.filter((skill) => skill.toLowerCase().includes(searchQuery.toLowerCase())).length === 0) && <p>No matching skills or sections.</p>}</div>}</div><span className="demo-pill"><span /> Local workspace</span><button className="theme-toggle" aria-label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'} title={theme === 'light' ? 'Dark mode' : 'Light mode'} onClick={() => setTheme(theme === 'light' ? 'dark' : 'light')}>{theme === 'light' ? <Moon size={17}/> : <Sun size={17}/>}</button><button className="account-button" onClick={() => { setAuthOpen(true); setAuthMessage('') }}><UserRound size={15}/> <span>Account</span></button><button
   className="icon-button"
   aria-label="Notifications"
   title="Notifications"
@@ -240,7 +252,7 @@ function App() {
     <path d="M10 21h4" />
   </svg>
 </button><div className="avatar small">{name.trim().charAt(0).toUpperCase() || 'U'}</div></div></header>
-        <div className="content">{apiError && <div className="notice">Backend error: {apiError}</div>}{apiLoading && <div className="notice">Analysing your career profile and saving assessment...</div>}
+        <div className="content" onClick={() => { if (searchOpen) setSearchOpen(false) }}>{apiError && <div className="notice">Backend error: {apiError}</div>}{apiLoading && <div className="notice">Analysing your career profile and saving assessment...</div>}
           {tab === 'Overview' && <>
             <div className="welcome-row"><div><div className="eyebrow">YOUR CAREER, REIMAGINED</div><h1>Make your next move <em>with confidence.</em></h1><p className="subheading">A clear bridge from where you are to where you want to be.</p></div><button className="primary-button" onClick={() => setTab('Career assessment')}>✦ {assessmentDone ? 'Update assessment' : 'Start assessment'} <span>→</span></button></div>
             <div className="hero-card"><div className="hero-copy"><span className="tag">YOUR CAREER BRIDGE</span><h2>{assessmentDone ? `Your path to ${target}` : 'Your next chapter is closer than you think.'}</h2><p>{assessmentDone ? `You have identified ${matched.length} matching skills. Build the missing skills one step at a time.` : 'Discover the skills you already have, identify what you need next, and turn your ambition into an actionable plan.'}</p><button className="light-button" onClick={() => setTab('Career assessment')}>{assessmentDone ? 'Review my results' : 'Build my career plan'} <span>→</span></button></div><div className="hero-art"><div className="orbit orbit-one" /><div className="orbit orbit-two" /><div className="art-core">✦</div><div className="float-card card-top">↗ <span>New possibilities</span></div><div className="float-card card-bottom"><span className="mini-check">✓</span><span>Skills that transfer</span></div></div></div>
@@ -318,6 +330,14 @@ function App() {
           <footer className="footer"><span>© 2026 CareerPivotCoach</span><span>Built for clarity, not guesswork <b>✦</b></span></footer>
         </div>
       </main>
+      {authOpen && <div className="auth-overlay" role="dialog" aria-modal="true" aria-label={authMode === 'login' ? 'Log in' : 'Create account'}>
+        <div className="auth-visual"><button className="auth-close" onClick={() => setAuthOpen(false)} aria-label="Close sign in"><X size={19}/></button><div className="auth-brand"><div className="brand-mark">CP</div><strong>CareerPivot</strong></div><div className="auth-visual-copy"><span className="tag">YOUR NEXT CHAPTER</span><h2>Build a career that feels <em>like you.</em></h2><p>Your skills, your direction, your momentum — all in one thoughtful workspace.</p><div className="auth-orbit"><div className="auth-orbit-ring"/><div className="auth-orbit-ring second"/><div className="auth-orbit-core"><Sparkles size={30}/></div><span className="auth-float one">✦ Skills</span><span className="auth-float two">↗ Growth</span></div></div><span className="auth-visual-foot">CAREERPIVOTCOACH · CAREER BRIDGE ENGINE</span></div>
+        <div className="auth-form-side"><div className="auth-form-wrap"><div className="auth-mobile-brand"><div className="brand-mark">CP</div><strong>CareerPivot</strong></div><div className="eyebrow">{authMode === 'login' ? 'WELCOME BACK' : 'START YOUR JOURNEY'}</div><h2>{authMode === 'login' ? 'Good to see you again.' : 'Create your workspace.'}</h2><p className="auth-subtitle">{authMode === 'login' ? 'Sign in to continue building your next move.' : 'A few details and your next chapter begins.'}</p>
+          <div className="auth-provider-grid"><button type="button" onClick={() => setAuthMessage('Google sign-in needs OAuth client credentials. Add GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET to the backend environment to enable it.')}><Chrome size={17}/> Continue with Google</button><button type="button" onClick={() => setAuthMessage('GitHub sign-in needs OAuth app credentials. Add GITHUB_CLIENT_ID and GITHUB_CLIENT_SECRET to the backend environment to enable it.')}><Github size={17}/> GitHub</button></div><div className="auth-divider"><span>or continue with email</span></div>
+          <form className="auth-form" onSubmit={(event) => { event.preventDefault(); setAuthMessage('Email/password authentication is not connected yet. You can continue in local workspace mode for now.') }}>{authMode === 'signup' && <label>Full name<input required minLength={2} placeholder="Your name" /></label>}<label>Email address<input type="email" required placeholder="you@example.com" /></label><label>Password<input type="password" required minLength={8} placeholder="At least 8 characters" /></label>{authMode === 'signup' && <label className="auth-check"><input type="checkbox" required/> <span>I agree to the terms and privacy policy.</span></label>}<button className="primary-button auth-submit" type="submit">{authMode === 'login' ? 'Sign in' : 'Create account'} <ArrowRight size={16}/></button></form>
+          {authMessage && <div className="auth-message" role="status">{authMessage}</div>}<p className="auth-switch">{authMode === 'login' ? "Don't have an account?" : 'Already have an account?'} <button onClick={() => { setAuthMode(authMode === 'login' ? 'signup' : 'login'); setAuthMessage('') }}>{authMode === 'login' ? 'Create account' : 'Sign in'}</button></p><button className="guest-link" onClick={() => setAuthOpen(false)}>Continue in local workspace <ArrowRight size={14}/></button><p className="auth-privacy"><LockKeyhole size={12}/> Authentication providers are not configured yet.</p>
+        </div></div>
+      </div>}
     </div>
   )
 }
