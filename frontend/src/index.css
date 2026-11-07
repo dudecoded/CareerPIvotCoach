@@ -35,3 +35,12 @@
 button:disabled{opacity:.55;cursor:not-allowed}
 .chat-error{padding:10px 20px;color:#a34e4e;font-size:10px}
 @media(max-width:760px){.interview-grid{grid-template-columns:1fr}.resume-textarea{min-height:220px}}
+
+.history-list{display:grid;gap:12px}
+.history-card{display:flex;align-items:center;justify-content:space-between;gap:20px}
+.history-card h3{font:700 15px Manrope,sans-serif;margin:9px 0 5px}
+.history-card p{font-size:10px;color:#9995ac;margin:0}
+.history-score{text-align:right;flex:0 0 auto}
+.history-score strong{display:block;font:800 24px Manrope,sans-serif;color:#7555d1}
+.history-score span{font-size:9px;color:#9995ac}
+@media(max-width:760px){.history-card{align-items:flex-start;flex-direction:column}.history-score{text-align:left}}
