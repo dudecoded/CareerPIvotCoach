@@ -15,7 +15,7 @@ const careerSkills: Record<Career, string[]> = {
   'UI/UX Designer': ['Figma', 'User research', 'Wireframing', 'Prototyping', 'Visual design', 'Usability testing'],
 }
 
-const allSkills = ['HTML', 'CSS', 'JavaScript', 'React', 'Python', 'SQL', 'Excel', 'Git', 'Pandas', 'Statistics', 'Scikit-learn', 'APIs', 'Communication', 'Figma', 'User research', 'Data visualization']
+const allSkills = ['HTML', 'CSS', 'JavaScript', 'React', 'Responsive design', 'Python', 'SQL', 'Excel', 'Git', 'Pandas', 'Statistics', 'Scikit-learn', 'Model evaluation', 'APIs', 'Authentication', 'Testing', 'Communication', 'Figma', 'User research', 'Data visualization', 'Prioritization', 'Analytics', 'Roadmapping', 'Stakeholder management', 'Wireframing', 'Prototyping', 'Visual design', 'Usability testing']
 
 const initialTasks = [
   { phase: 'Days 1–30', title: 'Build your foundations', detail: 'Review core concepts and complete one guided mini-project.', done: false },
