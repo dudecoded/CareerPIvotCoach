@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import './index.css'
-import { saveAssessment, sendCoachMessage, type AssessmentResult } from './api'
+import { saveAssessment, sendCoachMessage, reviewResume, generateInterviewPrep, type AssessmentResult, type ResumeReviewResult, type InterviewPrepResult } from './api'
 
 type SkillProficiency = 'Beginner' | 'Intermediate' | 'Advanced'
 type Career = 'Data Analyst' | 'Frontend Developer' | 'Backend Developer' | 'ML Engineer' | 'Product Manager' | 'UI/UX Designer'
-type Tab = 'Overview' | 'Career assessment' | 'Skill gaps' | 'Roadmap' | 'Career paths' | 'AI coach'
+type Tab = 'Overview' | 'Career assessment' | 'Skill gaps' | 'Roadmap' | 'Career paths' | 'AI coach' | 'Resume review' | 'Interview prep'
 
 const careerSkills: Record<Career, string[]> = {
   'Data Analyst': ['Excel', 'SQL', 'Python', 'Statistics', 'Data visualization', 'Communication'],
@@ -110,6 +110,13 @@ function App() {
   const [question, setQuestion] = useState('')
   const [chatLoading, setChatLoading] = useState(false)
   const [chatError, setChatError] = useState('')
+  const [resumeText, setResumeText] = useState('')
+  const [resumeResult, setResumeResult] = useState<ResumeReviewResult | null>(null)
+  const [resumeLoading, setResumeLoading] = useState(false)
+  const [resumeError, setResumeError] = useState('')
+  const [interviewResult, setInterviewResult] = useState<InterviewPrepResult | null>(null)
+  const [interviewLoading, setInterviewLoading] = useState(false)
+  const [interviewError, setInterviewError] = useState('')
   const [apiResult, setApiResult] = useState<AssessmentResult | null>(null)
   const [apiError, setApiError] = useState('')
   const [apiLoading, setApiLoading] = useState(false)
@@ -190,14 +197,14 @@ function App() {
     }
   }
 
-  const tabs: Tab[] = ['Overview', 'Career assessment', 'Skill gaps', 'Roadmap', 'Career paths', 'AI coach']
+  const tabs: Tab[] = ['Overview', 'Career assessment', 'Skill gaps', 'Roadmap', 'Career paths', 'AI coach', 'Resume review', 'Interview prep']
 
   return (
     <div className="app-shell">
       <aside className="sidebar">
         <div className="brand"><div className="brand-mark">CP</div><div><strong>CareerPivot</strong><span>CAREER BRIDGE ENGINE</span></div></div>
         <div className="workspace-label">WORKSPACE</div>
-        <nav>{tabs.map((item, index) => <button key={item} className={`nav-item ${tab === item ? 'active' : ''}`} onClick={() => setTab(item)}><span className="nav-icon">{['◉', '◎', '⌁', '↗', '◇', '✳'][index]}</span>{item}{item === 'Career assessment' && !assessmentDone && <i />}</button>)}</nav>
+        <nav>{tabs.map((item, index) => <button key={item} className={`nav-item ${tab === item ? 'active' : ''}`} onClick={() => setTab(item)}><span className="nav-icon">{['◉', '◎', '⌁', '↗', '◇', '✳', '▤', '☷'][index]}</span>{item}{item === 'Career assessment' && !assessmentDone && <i />}</button>)}</nav>
         <div className="sidebar-bottom"><div className="help-card"><div className="help-icon">✦</div><strong>Your next chapter starts here.</strong><p>Small, consistent steps create career momentum.</p><button onClick={() => setTab('Roadmap')}>View my roadmap →</button></div><div className="profile-mini"><div className="avatar">{name.trim().charAt(0).toUpperCase() || 'U'}</div><div><strong>{name || 'Your profile'}</strong><span>Personal workspace</span></div><span className="dots">•••</span></div></div>
       </aside>
 
@@ -271,6 +278,26 @@ function App() {
 
           {tab === 'AI coach' && <><div className="page-intro"><div className="eyebrow">YOUR CAREER COMPANION</div><h1>A little guidance can <em>go a long way.</em></h1><p>Ask for practical next steps based on your current career goal.</p></div><section className="panel chat-panel"><div className="chat-header"><div className="coach-avatar">✦</div><div><h3>Career Coach</h3><p><span className="online-dot" /> Offline career guidance · no API key required</p></div><span className="tag">OFFLINE</span></div><div className="chat-messages">{chat.map((message, index) => <div key={index} className={`chat-message ${message.role}`}>{message.role === 'coach' && <span className="message-avatar">✦</span>}<div>{message.text}</div></div>)}</div>{chatLoading && <div className="chat-message coach"><span className="message-avatar">✦</span><div>Thinking through your career context…</div></div>}<div className="prompt-suggestions"><button onClick={() => setQuestion('What should I learn first?')}>What should I learn first?</button><button onClick={() => setQuestion('Suggest a portfolio project for me')}>Suggest a portfolio project</button><button onClick={() => setQuestion('How can I prepare for an internship?')}>Prepare for an internship</button></div>{chatError && <div className="notice" role="alert">{chatError}</div>}<form className="chat-input" onSubmit={(e) => { e.preventDefault(); void sendMessage() }}><input value={question} onChange={(e) => setQuestion(e.target.value)} placeholder="Ask about your next career step..." /><button className="primary-button" type="submit" disabled={chatLoading || !question.trim()}>{chatLoading ? 'Thinking…' : 'Send ↑'}</button></form></section></>}
 
+          {tab === 'Resume review' && <>
+            <div className="page-intro"><div className="eyebrow">CAREER TOOL · RESUME REVIEW</div><h1>Make your experience <em>stand out.</em></h1><p>Paste your resume text for a first-pass review against your selected role. Your text is sent to your local backend and is not stored by this tool.</p></div>
+            <section className="panel form-panel">
+              <div className="form-section-title"><span>01</span><div><h3>Your resume text</h3><p>Paste plain text from your resume. Remove phone numbers, addresses, and other private details first.</p></div></div>
+              <textarea className="resume-textarea" value={resumeText} onChange={(event) => setResumeText(event.target.value)} placeholder="Paste your resume summary, skills, projects and experience here…" rows={12} />
+              <div className="form-footer"><span>{resumeText.trim().length} characters · minimum 80</span><button className="primary-button" disabled={resumeLoading || resumeText.trim().length < 80} onClick={async () => { setResumeLoading(true); setResumeError(''); try { setResumeResult(await reviewResume(resumeText, target === 'ML Engineer' ? 'Machine Learning Engineer' : target)); } catch (error) { setResumeError(error instanceof Error ? error.message : 'Resume review failed.'); } finally { setResumeLoading(false); } }}>{resumeLoading ? 'Reviewing…' : 'Review my resume →'}</button></div>
+              {resumeError && <div className="notice" role="alert">{resumeError}</div>}
+            </section>
+            {resumeResult && <div className="analysis-grid resume-results">
+              <section className="panel"><h3>Review summary</h3><p>{resumeResult.summary}</p><h3>Detected skills</h3><div className="career-skills">{resumeResult.detected_skills.map((skill) => <span key={skill}>{skill}</span>)}</div><h3>Relevant keywords not found</h3><div className="career-skills">{resumeResult.missing_keywords.map((skill) => <span key={skill}>{skill}</span>)}</div></section>
+              <section className="panel"><h3>What is working</h3><ul className="review-list">{resumeResult.strengths.map((item) => <li key={item}>{item}</li>)}</ul><h3>Recommended improvements</h3><ul className="review-list">{resumeResult.improvements.map((item) => <li key={item}>{item}</li>)}</ul></section>
+            </div>}
+            <p className="muted-label">This is a rule-based first-pass review, not an ATS score or a guarantee of selection.</p>
+          </>}
+
+          {tab === 'Interview prep' && <>
+            <div className="page-intro"><div className="eyebrow">CAREER TOOL · INTERVIEW PREPARATION</div><h1>Practise with <em>purpose.</em></h1><p>Generate a role-specific set of practice questions and understand what a strong answer should cover.</p></div>
+            <section className="panel"><div className="panel-heading"><div><h3>Your practice context</h3><p>Questions are tailored to your target role and selected skills.</p></div><span className="tag">PRACTICE SET</span></div><div className="form-footer"><span>Target: <strong>{target}</strong> · Experience: <strong>{experience}</strong></span><button className="primary-button" disabled={interviewLoading} onClick={async () => { setInterviewLoading(true); setInterviewError(''); try { setInterviewResult(await generateInterviewPrep(target === 'ML Engineer' ? 'Machine Learning Engineer' : target, selectedSkills, experience)); } catch (error) { setInterviewError(error instanceof Error ? error.message : 'Could not generate questions.'); } finally { setInterviewLoading(false); } }}>{interviewLoading ? 'Preparing…' : 'Generate practice questions →'}</button></div>{interviewError && <div className="notice" role="alert">{interviewError}</div>}</section>
+            {interviewResult && <><div className="task-tip">{interviewResult.preparation_tip}</div><div className="interview-grid">{interviewResult.questions.map((item, index) => <article className="panel interview-card" key={item.category}><span className="eyebrow">QUESTION {index + 1} · {item.category}</span><h3>{item.question}</h3><p><strong>What to cover:</strong> {item.what_to_cover}</p></article>)}</div></>}
+          </>}
           <footer className="footer"><span>© 2026 CareerPivotCoach</span><span>Built for clarity, not guesswork <b>✦</b></span></footer>
         </div>
       </main>
