@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import './index.css'
-import { saveAssessment, type AssessmentResult } from './api'
+import { saveAssessment, sendCoachMessage, type AssessmentResult } from './api'
 
 type SkillProficiency = 'Beginner' | 'Intermediate' | 'Advanced'
 type Career = 'Data Analyst' | 'Frontend Developer' | 'Backend Developer' | 'ML Engineer' | 'Product Manager' | 'UI/UX Designer'
@@ -108,6 +108,8 @@ function App() {
   const [assessmentDone, setAssessmentDone] = useState(() => readSavedState().assessmentDone ?? false)
   const [tasks, setTasks] = useState(() => readSavedState().tasks ?? initialTasks)
   const [question, setQuestion] = useState('')
+  const [chatLoading, setChatLoading] = useState(false)
+  const [chatError, setChatError] = useState('')
   const [apiResult, setApiResult] = useState<AssessmentResult | null>(null)
   const [apiError, setApiError] = useState('')
   const [apiLoading, setApiLoading] = useState(false)
@@ -158,14 +160,34 @@ function App() {
     setSkillProficiencies((current) => ({ ...current, [skill]: 'Beginner' }))
   }
 
-  function sendMessage() {
+  async function sendMessage() {
     const clean = question.trim()
-    if (!clean) return
-    setChat((current) => [...current, { role: 'user', text: clean }, {
-      role: 'coach',
-      text: `For your goal of becoming a ${target}, start with ${gaps[0] ?? 'a portfolio project'}. Set aside 30–45 minutes today, practise with a small example, and record what you learned. This demo coach uses your local assessment; it is not connected to a live AI service.`,
-    }])
+    if (!clean || chatLoading) return
+    const previousChat = chat.slice(-10)
+    setChat((current) => [...current, { role: 'user', text: clean }])
     setQuestion('')
+    setChatError('')
+    setChatLoading(true)
+    try {
+      const result = await sendCoachMessage({
+        message: clean,
+        current_role: currentRole,
+        target_role: target === 'ML Engineer' ? 'Machine Learning Engineer' : target,
+        experience_years: experience === 'Beginner' ? 0 : experience === 'Some experience' ? 2 : 5,
+        skills: selectedSkills.map((skill) => skill.toLowerCase()),
+        goal,
+        history: previousChat.map((item) => ({ role: item.role, content: item.text })),
+      })
+      setChat((current) => [...current, { role: 'coach', text: result.reply }])
+    } catch (error) {
+      setChatError(error instanceof Error ? error.message : 'The coach could not respond.')
+      setChat((current) => [...current, {
+        role: 'coach',
+        text: 'I could not connect to the coaching service. Please check that the backend is running, then try again.',
+      }])
+    } finally {
+      setChatLoading(false)
+    }
   }
 
   const tabs: Tab[] = ['Overview', 'Career assessment', 'Skill gaps', 'Roadmap', 'Career paths', 'AI coach']
@@ -239,7 +261,7 @@ function App() {
                   )}
                 </div>
               )
-            })}</div><div className="form-footer"><span>Your data stays in this browser for this demo.</span><button className="primary-button" onClick={async () => { setApiLoading(true); setApiError(''); try { const result = await saveAssessment({ current_role: currentRole, target_role: target === 'ML Engineer' ? 'Machine Learning Engineer' : target, experience_years: experience === 'Beginner' ? 0 : experience === 'Some experience' ? 2 : 5, skills: selectedSkills.map(s => s.toLowerCase()) }); setApiResult(result); setAssessmentDone(true); setTasks(result.roadmap.map(phase => ({ phase: phase.period, title: phase.title, detail: phase.tasks.map(t => t.task).join(' · '), done: false }))); setTab('Skill gaps'); } catch (e) { setApiError(e instanceof Error ? e.message : 'Could not connect to backend'); } finally { setApiLoading(false); } }}>Generate my career bridge <span>→</span></button></div></section></>}
+            })}</div><div className="form-footer"><span>Your data stays in this browser for this demo.</span><button className="primary-button" onClick={async () => { setApiLoading(true); setApiError(''); try { const result = await saveAssessment({ current_role: currentRole, target_role: target === 'ML Engineer' ? 'Machine Learning Engineer' : target, experience_years: experience === 'Beginner' ? 0 : experience === 'Some experience' ? 2 : 5, skills: selectedSkills.map(s => s.toLowerCase()), skill_proficiencies: skillProficiencies }); setApiResult(result); setAssessmentDone(true); setTasks(result.roadmap.map(phase => ({ phase: phase.period, title: phase.title, detail: phase.tasks.map(t => t.task).join(' · '), done: false }))); setTab('Skill gaps'); } catch (e) { setApiError(e instanceof Error ? e.message : 'Could not connect to backend'); } finally { setApiLoading(false); } }}>Generate my career bridge <span>→</span></button></div></section></>}
 
           {tab === 'Skill gaps' && <><div className="page-intro"><div className="eyebrow">YOUR CAREER BRIDGE</div><h1>See what connects you <em>to your goal.</em></h1><p>{apiResult?.recommendation ?? ''} Your analysis is based on the skills you selected—not a prediction of hiring outcomes.</p></div>{!assessmentDone && <div className="notice">Your results are a starting point. <button onClick={() => setTab('Career assessment')}>Complete the assessment →</button></div>}<div className="analysis-grid"><section className="panel readiness-panel"><div className="panel-heading"><div><h3>Skill coverage</h3><p>{target} · {matched.length} of {required.length} target skills matched</p></div><span className="tag">ESTIMATE</span></div><div className="score-circle" style={{ '--score': `${assessmentDone ? readiness : 0}%` } as React.CSSProperties}><div><strong>{assessmentDone ? readiness : 0}%</strong><span>coverage</span></div></div><p className="center-note">{apiResult?.score_note ?? 'This score measures selected-skill coverage only. It is not a job-readiness or employment prediction.'}</p></section><section className="panel"><div className="panel-heading"><div><h3>Skills you can build on</h3><p>Existing skills that overlap with your target.</p></div><span className="count-badge green-count">{matched.length}</span></div><div className="skill-list">{matched.length ? matched.map((skill) => <div className="skill-line" key={skill}><span className="skill-status matched">✓</span><div><strong>{skill}</strong><small>Selected as an existing skill</small></div><span className="level-label">MATCH</span></div>) : <p className="empty-note">Complete the assessment and select some existing skills.</p>}</div></section><section className="panel gap-panel"><div className="panel-heading"><div><h3>Priority skills to develop</h3><p>Target skills you haven't selected yet.</p></div><span className="count-badge orange-count">{gaps.length}</span></div><div className="skill-list">{gaps.map((skill, index) => <div className="skill-line" key={skill}><span className="skill-status gap">{index + 1}</span><div><strong>{skill}</strong><small>{index === 0 ? 'Start here · first priority' : 'Add to your learning plan'}</small></div><button className="tiny-button" onClick={() => toggleSkill(skill)}>Mark learned</button></div>)}</div></section><section className="panel project-panel"><span className="tag soft-tag">PUT IT INTO PRACTICE</span><h3>Build proof, not just knowledge.</h3><p>A portfolio project helps you practise several skills together and gives you something concrete to discuss.</p><div className="project-suggestion"><span className="project-icon">✦</span><div><strong>{suggestedProject}</strong><small>Suggested starter project for {target}</small></div></div><button className="text-button" onClick={() => setTab('Roadmap')}>Add to my roadmap →</button></section></div></>}
 
@@ -247,7 +269,7 @@ function App() {
 
           {tab === 'Career paths' && <><div className="page-intro"><div className="eyebrow">EXPLORE YOUR OPTIONS</div><h1>There is more than <em>one way forward.</em></h1><p>Explore a few common career directions and choose one to analyse.</p></div><div className="career-catalog">{(Object.keys(careerSkills) as Career[]).map((career, index) => <article className={`career-card ${target === career ? 'current-career' : ''}`} key={career}><div className="career-card-top"><span className="choice-icon">{['◈', '⌘', '⌁', '✳', '◇', '◈'][index]}</span>{target === career && <span className="tag">SELECTED</span>}</div><h3>{career}</h3><p>{['Turn data into clear insights that help teams make decisions.', 'Build accessible, responsive interfaces for web experiences.', 'Create APIs, services and systems that power applications.', 'Develop and evaluate machine-learning solutions.', 'Connect user needs, business goals and product delivery.', 'Design intuitive digital experiences around real user needs.'][index]}</p><div className="career-skills">{careerSkills[career].slice(0, 4).map((skill) => <span key={skill}>{skill}</span>)}</div><button className="text-button" onClick={() => { setTarget(career); setAssessmentDone(true); setTab('Skill gaps') }}>Explore this path →</button></article>)}</div></>}
 
-          {tab === 'AI coach' && <><div className="page-intro"><div className="eyebrow">YOUR CAREER COMPANION</div><h1>A little guidance can <em>go a long way.</em></h1><p>Ask for practical next steps based on your current career goal.</p></div><section className="panel chat-panel"><div className="chat-header"><div className="coach-avatar">✦</div><div><h3>Career Coach</h3><p><span className="online-dot" /> Local demo assistant · not live AI</p></div><span className="tag">DEMO MODE</span></div><div className="chat-messages">{chat.map((message, index) => <div key={index} className={`chat-message ${message.role}`}>{message.role === 'coach' && <span className="message-avatar">✦</span>}<div>{message.text}</div></div>)}</div><div className="prompt-suggestions"><button onClick={() => setQuestion('What should I learn first?')}>What should I learn first?</button><button onClick={() => setQuestion('Suggest a portfolio project for me')}>Suggest a portfolio project</button><button onClick={() => setQuestion('How can I prepare for an internship?')}>Prepare for an internship</button></div><form className="chat-input" onSubmit={(e) => { e.preventDefault(); sendMessage() }}><input value={question} onChange={(e) => setQuestion(e.target.value)} placeholder="Ask about your next career step..." /><button className="primary-button" type="submit">Send ↑</button></form></section></>}
+          {tab === 'AI coach' && <><div className="page-intro"><div className="eyebrow">YOUR CAREER COMPANION</div><h1>A little guidance can <em>go a long way.</em></h1><p>Ask for practical next steps based on your current career goal.</p></div><section className="panel chat-panel"><div className="chat-header"><div className="coach-avatar">✦</div><div><h3>Career Coach</h3><p><span className="online-dot" /> Offline career guidance · no API key required</p></div><span className="tag">OFFLINE</span></div><div className="chat-messages">{chat.map((message, index) => <div key={index} className={`chat-message ${message.role}`}>{message.role === 'coach' && <span className="message-avatar">✦</span>}<div>{message.text}</div></div>)}</div>{chatLoading && <div className="chat-message coach"><span className="message-avatar">✦</span><div>Thinking through your career context…</div></div>}<div className="prompt-suggestions"><button onClick={() => setQuestion('What should I learn first?')}>What should I learn first?</button><button onClick={() => setQuestion('Suggest a portfolio project for me')}>Suggest a portfolio project</button><button onClick={() => setQuestion('How can I prepare for an internship?')}>Prepare for an internship</button></div>{chatError && <div className="notice" role="alert">{chatError}</div>}<form className="chat-input" onSubmit={(e) => { e.preventDefault(); void sendMessage() }}><input value={question} onChange={(e) => setQuestion(e.target.value)} placeholder="Ask about your next career step..." /><button className="primary-button" type="submit" disabled={chatLoading || !question.trim()}>{chatLoading ? 'Thinking…' : 'Send ↑'}</button></form></section></>}
 
           <footer className="footer"><span>© 2026 CareerPivotCoach</span><span>Built for clarity, not guesswork <b>✦</b></span></footer>
         </div>
