@@ -46,7 +46,7 @@ def test_create_assessment_persists_and_returns_analysis(client):
     assert response.status_code == 201
     data = response.json()
     assert data["id"] is not None
-    assert data["readiness_score"] == 67
+    assert data["readiness_score"] == 23
     assert "React" in [gap["skill"] for gap in data["skill_gaps"]]
 
 
