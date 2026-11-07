@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import './index.css'
-import { saveAssessment, sendCoachMessage, reviewResume, generateInterviewPrep, type AssessmentResult, type ResumeReviewResult, type InterviewPrepResult } from './api'
+import { saveAssessment, sendCoachMessage, reviewResume, generateInterviewPrep, getAssessmentHistory, type AssessmentResult, type ResumeReviewResult, type InterviewPrepResult } from './api'
 
 type SkillProficiency = 'Beginner' | 'Intermediate' | 'Advanced'
 type Career = 'Data Analyst' | 'Frontend Developer' | 'Backend Developer' | 'ML Engineer' | 'Product Manager' | 'UI/UX Designer'
-type Tab = 'Overview' | 'Career assessment' | 'Skill gaps' | 'Roadmap' | 'Career paths' | 'AI coach' | 'Resume review' | 'Interview prep'
+type Tab = 'Overview' | 'Career assessment' | 'Skill gaps' | 'Roadmap' | 'Career paths' | 'AI coach' | 'Resume review' | 'Interview prep' | 'Assessment history'
 
 const careerSkills: Record<Career, string[]> = {
   'Data Analyst': ['Excel', 'SQL', 'Python', 'Statistics', 'Data visualization', 'Communication'],
@@ -117,6 +117,9 @@ function App() {
   const [interviewResult, setInterviewResult] = useState<InterviewPrepResult | null>(null)
   const [interviewLoading, setInterviewLoading] = useState(false)
   const [interviewError, setInterviewError] = useState('')
+  const [assessmentHistory, setAssessmentHistory] = useState<{ id: number; current_role: string; target_role: string; experience_years: number; readiness_score: number; created_at: string }[]>([])
+  const [historyLoading, setHistoryLoading] = useState(false)
+  const [historyError, setHistoryError] = useState('')
   const [apiResult, setApiResult] = useState<AssessmentResult | null>(null)
   const [apiError, setApiError] = useState('')
   const [apiLoading, setApiLoading] = useState(false)
@@ -132,6 +135,14 @@ function App() {
       console.warn('CareerPivotCoach could not save data in this browser.', error)
     }
   }, [name, currentRole, target, experience, selectedSkills, skillProficiencies, goal, assessmentDone, tasks, chat])
+
+  useEffect(() => {
+    if (tab !== 'Assessment history') return
+    let active = true
+    setHistoryLoading(true)
+    getAssessmentHistory().then((result) => { if (active) setAssessmentHistory(result.assessments) }).catch((error) => { if (active) setHistoryError(error instanceof Error ? error.message : 'Could not load assessment history.') }).finally(() => { if (active) setHistoryLoading(false) })
+    return () => { active = false }
+  }, [tab])
 
   const required = careerSkills[target]
   const matched = apiResult ? apiResult.matched_skills : required.filter((skill) => selectedSkills.some((s) => s.toLowerCase() === skill.toLowerCase()))
@@ -197,14 +208,14 @@ function App() {
     }
   }
 
-  const tabs: Tab[] = ['Overview', 'Career assessment', 'Skill gaps', 'Roadmap', 'Career paths', 'AI coach', 'Resume review', 'Interview prep']
+  const tabs: Tab[] = ['Overview', 'Career assessment', 'Skill gaps', 'Roadmap', 'Career paths', 'AI coach', 'Resume review', 'Interview prep', 'Assessment history']
 
   return (
     <div className="app-shell">
       <aside className="sidebar">
         <div className="brand"><div className="brand-mark">CP</div><div><strong>CareerPivot</strong><span>CAREER BRIDGE ENGINE</span></div></div>
         <div className="workspace-label">WORKSPACE</div>
-        <nav>{tabs.map((item, index) => <button key={item} className={`nav-item ${tab === item ? 'active' : ''}`} onClick={() => setTab(item)}><span className="nav-icon">{['◉', '◎', '⌁', '↗', '◇', '✳', '▤', '☷'][index]}</span>{item}{item === 'Career assessment' && !assessmentDone && <i />}</button>)}</nav>
+        <nav>{tabs.map((item, index) => <button key={item} className={`nav-item ${tab === item ? 'active' : ''}`} onClick={() => setTab(item)}><span className="nav-icon">{['◉', '◎', '⌁', '↗', '◇', '✳', '▤', '☷', '◷'][index]}</span>{item}{item === 'Career assessment' && !assessmentDone && <i />}</button>)}</nav>
         <div className="sidebar-bottom"><div className="help-card"><div className="help-icon">✦</div><strong>Your next chapter starts here.</strong><p>Small, consistent steps create career momentum.</p><button onClick={() => setTab('Roadmap')}>View my roadmap →</button></div><div className="profile-mini"><div className="avatar">{name.trim().charAt(0).toUpperCase() || 'U'}</div><div><strong>{name || 'Your profile'}</strong><span>Personal workspace</span></div><span className="dots">•••</span></div></div>
       </aside>
 
@@ -297,6 +308,13 @@ function App() {
             <div className="page-intro"><div className="eyebrow">CAREER TOOL · INTERVIEW PREPARATION</div><h1>Practise with <em>purpose.</em></h1><p>Generate a role-specific set of practice questions and understand what a strong answer should cover.</p></div>
             <section className="panel"><div className="panel-heading"><div><h3>Your practice context</h3><p>Questions are tailored to your target role and selected skills.</p></div><span className="tag">PRACTICE SET</span></div><div className="form-footer"><span>Target: <strong>{target}</strong> · Experience: <strong>{experience}</strong></span><button className="primary-button" disabled={interviewLoading} onClick={async () => { setInterviewLoading(true); setInterviewError(''); try { setInterviewResult(await generateInterviewPrep(target === 'ML Engineer' ? 'Machine Learning Engineer' : target, selectedSkills, experience)); } catch (error) { setInterviewError(error instanceof Error ? error.message : 'Could not generate questions.'); } finally { setInterviewLoading(false); } }}>{interviewLoading ? 'Preparing…' : 'Generate practice questions →'}</button></div>{interviewError && <div className="notice" role="alert">{interviewError}</div>}</section>
             {interviewResult && <><div className="task-tip">{interviewResult.preparation_tip}</div><div className="interview-grid">{interviewResult.questions.map((item, index) => <article className="panel interview-card" key={item.category}><span className="eyebrow">QUESTION {index + 1} · {item.category}</span><h3>{item.question}</h3><p><strong>What to cover:</strong> {item.what_to_cover}</p></article>)}</div></>}
+          </>}
+          {tab === 'Assessment history' && <>
+            <div className="page-intro"><div className="eyebrow">YOUR PROGRESS OVER TIME</div><h1>Every step <em>counts.</em></h1><p>Review assessments saved to the local CareerPivotCoach database.</p></div>
+            {historyLoading && <div className="notice">Loading your assessment history…</div>}
+            {historyError && <div className="notice" role="alert">{historyError}</div>}
+            {!historyLoading && assessmentHistory.length === 0 && <section className="panel"><h3>No saved assessments yet</h3><p>Complete your career assessment to create your first history entry.</p><button className="primary-button" onClick={() => setTab('Career assessment')}>Start assessment →</button></section>}
+            {assessmentHistory.length > 0 && <div className="history-list">{assessmentHistory.map((item) => <article className="panel history-card" key={item.id}><div><span className="eyebrow">{new Date(item.created_at).toLocaleString()}</span><h3>{item.current_role} → {item.target_role}</h3><p>{item.experience_years} years reported experience</p></div><div className="history-score"><strong>{item.readiness_score}%</strong><span>readiness estimate</span></div></article>)}</div>}
           </>}
           <footer className="footer"><span>© 2026 CareerPivotCoach</span><span>Built for clarity, not guesswork <b>✦</b></span></footer>
         </div>
