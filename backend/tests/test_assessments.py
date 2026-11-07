@@ -77,3 +77,23 @@ def test_unknown_target_role_is_rejected(client):
         },
     )
     assert response.status_code == 422
+
+
+
+def test_assessment_readiness_uses_reported_proficiency(client):
+    response = client.post(
+        "/api/careers/analyze",
+        json={
+            "current_role": "Student",
+            "target_role": "Frontend Developer",
+            "experience_years": 0,
+            "skills": ["html", "css", "javascript"],
+            "skill_proficiencies": {
+                "HTML": "Advanced",
+                "CSS": "Intermediate",
+                "JavaScript": "Beginner",
+            },
+        },
+    )
+    assert response.status_code == 200
+    assert response.json()["readiness_score"] == 34
