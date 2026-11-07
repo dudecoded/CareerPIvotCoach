@@ -72,3 +72,32 @@ export function getAssessmentHistory() {
 export function sendCoachMessage(data: CoachRequest) {
   return request<CoachResponse>("/api/coach/chat", { method: "POST", body: JSON.stringify(data) });
 }
+
+export type ResumeReviewResult = {
+  target_role: string;
+  detected_skills: string[];
+  missing_keywords: string[];
+  strengths: string[];
+  improvements: string[];
+  summary: string;
+};
+
+export type InterviewPrepResult = {
+  target_role: string;
+  questions: { category: string; question: string; what_to_cover: string }[];
+  preparation_tip: string;
+};
+
+export function reviewResume(resume_text: string, target_role: string) {
+  return request<ResumeReviewResult>("/api/tools/resume-review", {
+    method: "POST",
+    body: JSON.stringify({ resume_text, target_role }),
+  });
+}
+
+export function generateInterviewPrep(target_role: string, skills: string[], experience_level: string) {
+  return request<InterviewPrepResult>("/api/tools/interview-prep", {
+    method: "POST",
+    body: JSON.stringify({ target_role, skills, experience_level }),
+  });
+}
