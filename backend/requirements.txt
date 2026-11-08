@@ -7,3 +7,4 @@ pandas
 numpy
 pytest
 httpx
+opencv-python-headless>=4.10,<5
