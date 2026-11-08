@@ -159,11 +159,19 @@ function App() {
   }, [name, currentRole, target, experience, selectedSkills, skillProficiencies, goal, assessmentDone, tasks, chat])
 
   useEffect(() => {
-    if (tab !== 'Assessment history') return
+    if (tab !== 'Assessment history' || !accessToken) return
     let active = true
     getAssessmentHistory().then((result) => { if (active) setAssessmentHistory(result.assessments) }).catch((error) => { if (active) setHistoryError(error instanceof Error ? error.message : 'Could not load assessment history.') }).finally(() => { if (active) setHistoryLoading(false) })
+    getAnalytics().then((result) => { if (active) setAnalytics(result) }).catch(() => { if (active) setAnalytics(null) })
     return () => { active = false }
-  }, [tab])
+  }, [tab, accessToken])
+
+  useEffect(() => {
+    if (tab !== 'Domain learning') return
+    let active = true
+    getDomainLearning(target === 'ML Engineer' ? 'ML Engineer' : target).then((result) => { if (active) setDomainContent(result) }).catch(() => { if (active) setDomainContent(null) })
+    return () => { active = false }
+  }, [tab, target])
 
   const required = careerSkills[target]
   const matched = required.filter((skill) => selectedSkills.some((selected) => selected.toLowerCase() === skill.toLowerCase()))
