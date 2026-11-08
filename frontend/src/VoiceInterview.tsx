@@ -76,6 +76,7 @@ export default function VoiceInterview({ targetRole }: { targetRole: string }) {
   const [notice, setNotice] = useState('')
   const [interim, setInterim] = useState('')
   const recognitionRef = useRef<Recognition | null>(null)
+  const roomRef = useRef<HTMLElement>(null)
   const [questionsForSession, setQuestionsForSession] = useState<string[]>([])
   const currentQuestion = questionsForSession[questionIndex] ?? ''
 
@@ -87,7 +88,7 @@ export default function VoiceInterview({ targetRole }: { targetRole: string }) {
 
   useEffect(() => {
     const handleFullscreen = () => {
-      if (active && !document.fullscreenElement) {
+      if (active && document.fullscreenElement !== roomRef.current) {
         setActive(false)
         setPaused(true)
         setListening(false)
@@ -123,7 +124,7 @@ export default function VoiceInterview({ targetRole }: { targetRole: string }) {
     setFinished(false)
     if (!document.fullscreenElement) {
       try {
-        await document.documentElement.requestFullscreen()
+        await roomRef.current?.requestFullscreen()
       } catch {
         setNotice('Please allow fullscreen to begin. The interview cannot start without it.')
         return
@@ -208,7 +209,7 @@ export default function VoiceInterview({ targetRole }: { targetRole: string }) {
   const mmss = `${Math.floor(seconds / 60).toString().padStart(2, '0')}:${(seconds % 60).toString().padStart(2, '0')}`
 
   return (
-    <section className="panel voice-interview">
+    <section ref={roomRef} className="panel voice-interview">
       <div className="voice-heading"><div><span className="eyebrow">STAGE 3 · VOICE INTERVIEW ENGINE</span><h2>Mock interview room</h2><p>Speak your answers, practise under timed conditions, and review a structured feedback summary.</p></div><span className="voice-fullscreen-badge"><Maximize size={13}/> FULLSCREEN REQUIRED</span></div>
       {!active && !finished && !paused && <div className="voice-setup">
         <div className="voice-setup-copy"><Brain size={24}/><h3>Prepare for your {targetRole} interview</h3><p>Questions are selected from a built-in role-based bank. The interviewer can read each question aloud and capture your spoken response.</p></div>
@@ -216,9 +217,9 @@ export default function VoiceInterview({ targetRole }: { targetRole: string }) {
         <div className="voice-fullscreen-note"><ShieldCheck size={16}/><span>Fullscreen is mandatory once a session starts. If you exit fullscreen, the session pauses. This is a focus setting, not a proctoring or cheating detector.</span></div>
         <button className="primary-button" onClick={() => void start()}><Maximize size={15}/> Enter fullscreen & start interview</button>
       </div>}
-      {paused && !active && <div className="voice-paused"><strong>Interview paused</strong><p>Fullscreen was exited. Re-enter it to continue from the same question.</p><button className="primary-button" onClick={async () => { try { await document.documentElement.requestFullscreen(); setPaused(false); setActive(true); speak(currentQuestion); setNotice(''); } catch { setNotice('Fullscreen is required to resume this interview.'); } }}><Maximize size={14}/> Resume in fullscreen</button></div>}
+      {paused && !active && <div className="voice-paused"><strong>Interview paused</strong><p>Fullscreen was exited. Re-enter it to continue from the same question.</p><button className="primary-button" onClick={async () => { try { await roomRef.current?.requestFullscreen(); setPaused(false); setActive(true); speak(currentQuestion); setNotice(''); } catch { setNotice('Fullscreen is required to resume this interview.'); } }}><Maximize size={14}/> Resume in fullscreen</button></div>}
       {active && <div className="voice-session">
-        <div className="voice-session-top"><span><i/> SESSION LIVE</span><span><Clock3 size={14}/> {mmss}</span><span>QUESTION {questionIndex + 1} / {questionsForSession.current.length}</span></div>
+        <div className="voice-session-top"><span><i/> SESSION LIVE</span><span><Clock3 size={14}/> {mmss}</span><span>QUESTION {questionIndex + 1} / {questionsForSession.length}</span></div>
         <div className="voice-question"><span className="eyebrow">INTERVIEWER ASKS</span><h3>{currentQuestion}</h3><button className="voice-secondary" onClick={() => speak(currentQuestion)}><Volume2 size={14}/> Repeat question</button></div>
         <div className="voice-answer-label"><strong>Your answer</strong><span>{listening ? 'Microphone active' : 'Microphone off'}</span></div>
         <textarea value={answer} onChange={(event) => setAnswer(event.target.value)} placeholder="Your speech transcript appears here. You can also type or edit your answer…" rows={6}/>
@@ -231,7 +232,7 @@ export default function VoiceInterview({ targetRole }: { targetRole: string }) {
         <div className="voice-report-details"><h3>{transcript.length} answers recorded · {mmss} elapsed</h3><p>This is heuristic practice feedback based on answer length, signposting and use of examples. It does not verify technical correctness or replace expert evaluation.</p>
           {transcript.map((item, index) => <article className="voice-answer-review" key={index}><strong>Q{index + 1}. {item.question}</strong><p>{item.answer}</p><div><span>{item.score.words} words</span><span>Structure {item.score.structure}/100</span><span>Examples {item.score.specificity}/100</span><b>{item.score.overall}/100</b></div></article>)}
           <button className="primary-button" onClick={() => { setFinished(false); setPaused(false); setTranscript([]); setQuestionIndex(0); setAnswer(''); setSeconds(0); }}><RotateCcw size={14}/> Set up another interview</button>
-          {document.fullscreenElement && <button className="voice-text-button" onClick={() => void document.exitFullscreen()}>Exit fullscreen</button>}
+          {document.fullscreenElement === roomRef.current && <button className="voice-text-button" onClick={() => void document.exitFullscreen()}>Finish & exit fullscreen</button>}
         </div>
       </div>}
       {notice && !active && !finished && <p className="voice-notice" role="status">{notice}</p>}
