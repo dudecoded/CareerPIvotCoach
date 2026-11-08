@@ -92,21 +92,35 @@ export default function InterviewStudio({ targetRole, currentRole, selectedSkill
 
       // Load MediaPipe Tasks Vision from its official CDN. The video remains in
       // the browser; only small periodic snapshots go to the local OpenCV API.
-      // eslint-disable-next-line no-new-func
       const importModule = new Function('url', 'return import(url)') as (url: string) => Promise<VisionModule>
       const vision = await importModule(`https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@${VISION_VERSION}/+esm`)
       const fileset = await vision.FilesetResolver.forVisionTasks(WASM_URL)
-      faceRef.current = await vision.FaceLandmarker.createFromOptions(fileset, {
+      const faceOptions = {
         baseOptions: { modelAssetPath: FACE_MODEL, delegate: 'GPU' },
         runningMode: 'VIDEO',
         numFaces: 2,
         outputFaceBlendshapes: false,
-      })
-      handRef.current = await vision.HandLandmarker.createFromOptions(fileset, {
+      }
+      const handOptions = {
         baseOptions: { modelAssetPath: HAND_MODEL, delegate: 'GPU' },
         runningMode: 'VIDEO',
         numHands: 2,
-      })
+      }
+      try {
+        faceRef.current = await vision.FaceLandmarker.createFromOptions(fileset, faceOptions)
+        handRef.current = await vision.HandLandmarker.createFromOptions(fileset, handOptions)
+      } catch {
+        faceRef.current?.close()
+        handRef.current?.close()
+        faceRef.current = await vision.FaceLandmarker.createFromOptions(fileset, {
+          ...faceOptions,
+          baseOptions: { modelAssetPath: FACE_MODEL, delegate: 'CPU' },
+        })
+        handRef.current = await vision.HandLandmarker.createFromOptions(fileset, {
+          ...handOptions,
+          baseOptions: { modelAssetPath: HAND_MODEL, delegate: 'CPU' },
+        })
+      }
       setVisionReady(true)
       setCameraActive(true)
       let previousTime = 0
