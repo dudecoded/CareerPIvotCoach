@@ -55,12 +55,22 @@ export type CoachResponse = { reply: string; mode: "offline" };
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   let response: Response;
   try {
-    response = await fetch(`${API_BASE}${path}`, {
-      ...options,
-      headers: { "Content-Type": "application/json", ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}), ...options?.headers },
-    });
-  } catch {
-    throw new Error("Cannot reach the CareerPivotCoach API. Start the FastAPI backend and try again.");
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 15000);
+    try {
+      response = await fetch(`${API_BASE}${path}`, {
+        ...options,
+        signal: controller.signal,
+        headers: { "Content-Type": "application/json", ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}), ...options?.headers },
+      });
+    } finally {
+      window.clearTimeout(timeout);
+    }
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") {
+      throw new Error("The CareerPivotCoach API did not respond within 15 seconds. Check that the backend is running at http://127.0.0.1:8000, then try again.");
+    }
+    throw new Error("Cannot reach the CareerPivotCoach API at http://127.0.0.1:8000. Start the FastAPI backend and try again.");
   }
 
   if (!response.ok) {
