@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { Brain, Clock3, Maximize, Mic, MicOff, Play, RotateCcw, Send, ShieldCheck, Volume2 } from 'lucide-react'
+import { Brain, Clock3, Maximize, Mic, MicOff, RotateCcw, Send, ShieldCheck, Volume2 } from 'lucide-react'
 
 type SpeechResult = { 0: { transcript: string }; isFinal: boolean }
 type RecognitionEvent = { resultIndex: number; results: ArrayLike<SpeechResult> }
@@ -111,18 +111,6 @@ export default function VoiceInterview({ targetRole }: { targetRole: string }) {
     const utterance = new SpeechSynthesisUtterance(text)
     utterance.rate = 0.94
     window.speechSynthesis.speak(utterance)
-  }
-
-  const enterFullscreen = async () => {
-    try {
-      await document.documentElement.requestFullscreen()
-      setNotice('')
-      setActive(true)
-      setFinished(false)
-      speak(questionsForSession.current[questionIndex])
-    } catch {
-      setNotice('Fullscreen is required for an interview session. Allow fullscreen in your browser and try again.')
-    }
   }
 
   const start = async () => {
