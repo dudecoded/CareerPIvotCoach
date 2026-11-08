@@ -1,3 +1,22 @@
+
+let accessToken = localStorage.getItem("cpc-access-token") || "";
+export function setAccessToken(token: string) {
+  accessToken = token;
+  if (token) localStorage.setItem("cpc-access-token", token);
+  else localStorage.removeItem("cpc-access-token");
+}
+export type AuthUser = { id: number; name: string; email: string; profile: Record<string, unknown> };
+export async function authenticate(mode: "login" | "signup", payload: { name?: string; email: string; password: string }) {
+  const result = await request<{ access_token: string; user: AuthUser }>(`/api/auth/${mode === "signup" ? "register" : "login"}`, { method: "POST", body: JSON.stringify(payload) });
+  setAccessToken(result.access_token);
+  return result.user;
+}
+export function getCurrentUser() { return request<AuthUser>("/api/auth/me"); }
+export type UserProfile = { education: string; current_role: string; target_domain: string; experience_level: string; interests: string[]; goals: string[]; learning_style: string; hours_per_week: number; skills: string[] };
+export function saveUserProfile(profile: UserProfile) { return request<{ profile: UserProfile }>("/api/profile", { method: "PUT", body: JSON.stringify(profile) }); }
+export function getDomainLearning(domain: string) { return request<{ domain: string; overview: string; topics: string[]; projects: string[]; practice: string[] }>(`/api/learning/${encodeURIComponent(domain)}`); }
+export function getAnalytics() { return request<{ assessment_count: number; latest: number | null; readiness_history: { date: string; score: number; target_role: string }[]; matched_skill_counts: { date: string; count: number }[] }>("/api/analytics/summary"); }
+
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "http://127.0.0.1:8000";
 
 export type AssessmentRequest = {
@@ -38,7 +57,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   try {
     response = await fetch(`${API_BASE}${path}`, {
       ...options,
-      headers: { "Content-Type": "application/json", ...options?.headers },
+      headers: { "Content-Type": "application/json", ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}), ...options?.headers },
     });
   } catch {
     throw new Error("Cannot reach the CareerPivotCoach API. Start the FastAPI backend and try again.");
