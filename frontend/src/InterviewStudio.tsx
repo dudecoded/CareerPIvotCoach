@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Camera, CameraOff, Eye, Hand, ScanFace, ShieldCheck, AlertCircle, Sparkles, RefreshCw } from 'lucide-react'
 import { analyzeInterviewFrame, type InterviewFrameAnalysis } from './api'
+import VoiceInterview from './VoiceInterview'
 
 type Landmark = { x: number; y: number; z?: number }
 type FaceResult = { faceLandmarks: Landmark[][] }
@@ -221,6 +222,8 @@ export default function InterviewStudio({ targetRole, currentRole, selectedSkill
           </div>
         </section>
       </div>
+
+      <VoiceInterview targetRole={targetRole} />
 
       <div className="studio-bottom-grid">
         <section className="panel studio-guidance"><div className="studio-guidance-icon"><Eye size={18}/></div><div><h3>Natural eye contact</h3><p>Look towards the camera when speaking, but feel free to glance away naturally while thinking. The gaze estimate is approximate and can be affected by glasses, lighting and camera angle.</p></div></section>
