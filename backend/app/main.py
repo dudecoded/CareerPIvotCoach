@@ -5,6 +5,7 @@ from app.api.routes.assessments import router as assessments_router
 from app.api.routes.careers import router as careers_router
 from app.api.routes.coach import router as coach_router
 from app.api.routes.tools import router as tools_router
+from app.api.routes.interview import router as interview_router
 from app.db.database import Base, engine
 from app.models.assessment import Assessment  # noqa: F401 - registers model metadata
 
@@ -31,6 +32,7 @@ app.include_router(assessments_router)
 app.include_router(careers_router)
 app.include_router(coach_router)
 app.include_router(tools_router)
+app.include_router(interview_router)
 
 
 @app.get("/")
