@@ -14,6 +14,7 @@ CareerPivotCoach helps students and early-career professionals plan a transition
 - **Offline career coach:** context-aware guidance for learning plans, projects, skill gaps, and internship preparation. No API key required.
 - **Resume review:** paste resume text for a first-pass target-role keyword and writing review. The text is processed by the local backend and is not persisted.
 - **Interview preparation:** generate role-specific practice questions and answer guidance.
+- **AI Interview Studio (vision beta):** use a webcam preview with MediaPipe face and hand landmarks in the browser, plus periodic OpenCV face/eye-region and lighting checks through the local FastAPI backend. The current stage is camera setup and visual feedback; voice interviewing and answer evaluation are planned next.
 
 The resume review and offline coach are rule-based features. They are not an ATS, a substitute for human career advice, or a live generative AI model.
 
@@ -22,6 +23,7 @@ The resume review and offline coach are rule-based features. They are not an ATS
 - Frontend: React 19, TypeScript, Vite, custom CSS
 - Backend: Python, FastAPI, Pydantic, SQLAlchemy
 - Database: SQLite for local development
+- Computer vision: OpenCV (backend), MediaPipe Tasks Vision (browser)
 - Tests: pytest, FastAPI TestClient
 
 ## Repository structure
@@ -32,6 +34,7 @@ CareerPIvotCoach/
 │   ├── src/
 │   │   ├── App.tsx
 │   │   ├── api.ts
+│   │   ├── InterviewStudio.tsx
 │   │   └── index.css
 │   └── package.json
 ├── backend/
@@ -100,11 +103,15 @@ npm run build
 | POST | `/api/coach/chat` | Offline contextual career coach |
 | POST | `/api/tools/resume-review` | First-pass resume review |
 | POST | `/api/tools/interview-prep` | Interview practice questions |
+| POST | `/api/interview/analyze-frame` | Ephemeral OpenCV webcam frame analysis |
 
 ## Current limitations and next steps
 
 - Assessments are stored locally without user accounts or ownership boundaries. Do not expose this API publicly as a multi-user service until authentication and per-user authorization are implemented.
 - Browser local storage is device/browser-specific and is not a cloud backup.
 - The coach and career tools are deterministic/rule-based. A provider adapter and server-side secret management can be added later for live AI.
+- AI Interview Studio currently implements camera and visual landmark checks only. It does not determine dishonesty, intent, emotion, confidence, or candidate suitability. Eye-gaze estimates are approximate and affected by glasses, lighting, camera position, and model performance.
+- MediaPipe model assets are loaded by the browser from Google's model hosting/CDN on first use. The browser needs internet access for this initial download.
+- Face and hand landmark processing runs in the browser. Small periodic camera snapshots are sent to the local backend for OpenCV checks; the endpoint does not save images. The feature is opt-in and requires camera permission. Voice interviewing, transcription, and answer scoring are not implemented yet.
 - Career skill maps are starter maps and should be reviewed with current job descriptions and domain experts.
 - Production deployment should use PostgreSQL, migrations, environment-specific CORS, rate limits, monitoring, and security review.
