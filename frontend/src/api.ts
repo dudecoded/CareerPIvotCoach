@@ -71,9 +71,9 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
     }
   } catch (error) {
     if (error instanceof DOMException && error.name === "AbortError") {
-      throw new Error("The CareerPivotCoach API did not respond within 15 seconds. Check that the backend is running at http://127.0.0.1:8000, then try again.");
+      throw new Error("The CareerPivotCoach API did not respond within 15 seconds. Check that the backend is running at http://127.0.0.1:8000, then try again.", { cause: error });
     }
-    throw new Error("Cannot reach the CareerPivotCoach API at http://127.0.0.1:8000. Start the FastAPI backend and try again.");
+    throw new Error("Cannot reach the CareerPivotCoach API at http://127.0.0.1:8000. Start the FastAPI backend and try again.", { cause: error });
   }
 
   if (!response.ok) {
