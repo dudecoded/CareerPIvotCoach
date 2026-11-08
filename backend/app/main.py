@@ -14,7 +14,7 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI(
     title="CareerPivotCoach API",
     description="Career transition planning and assessment API",
-    version="1.1.0",
+    version="1.2.0",
 )
 
 app.add_middleware(
