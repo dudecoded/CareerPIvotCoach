@@ -69,6 +69,7 @@ export default function VoiceInterview({ targetRole }: { targetRole: string }) {
   const [answer, setAnswer] = useState('')
   const [transcript, setTranscript] = useState<{ question: string; answer: string; score: ReturnType<typeof assessAnswer> }[]>([])
   const [active, setActive] = useState(false)
+  const [paused, setPaused] = useState(false)
   const [finished, setFinished] = useState(false)
   const [listening, setListening] = useState(false)
   const [seconds, setSeconds] = useState(0)
@@ -90,6 +91,7 @@ export default function VoiceInterview({ targetRole }: { targetRole: string }) {
     const handleFullscreen = () => {
       if (active && !document.fullscreenElement) {
         setActive(false)
+        setPaused(true)
         setListening(false)
         recognitionRef.current?.stop()
         window.speechSynthesis?.cancel()
@@ -130,6 +132,7 @@ export default function VoiceInterview({ targetRole }: { targetRole: string }) {
     }
     setNotice('')
     setActive(true)
+    setPaused(false)
     speak(questionsForSession.current[0])
   }
 
@@ -208,12 +211,13 @@ export default function VoiceInterview({ targetRole }: { targetRole: string }) {
   return (
     <section className="panel voice-interview">
       <div className="voice-heading"><div><span className="eyebrow">STAGE 3 · VOICE INTERVIEW ENGINE</span><h2>Mock interview room</h2><p>Speak your answers, practise under timed conditions, and review a structured feedback summary.</p></div><span className="voice-fullscreen-badge"><Maximize size={13}/> FULLSCREEN REQUIRED</span></div>
-      {!active && !finished && <div className="voice-setup">
+      {!active && !finished && !paused && <div className="voice-setup">
         <div className="voice-setup-copy"><Brain size={24}/><h3>Prepare for your {targetRole} interview</h3><p>Questions are selected from a built-in role-based bank. The interviewer can read each question aloud and capture your spoken response.</p></div>
         <label>Interview length<select value={count} onChange={(event) => setCount(Number(event.target.value))}><option value={5}>5 questions · quick practice</option><option value={7}>7 questions · full practice</option></select></label>
         <div className="voice-fullscreen-note"><ShieldCheck size={16}/><span>Fullscreen is mandatory once a session starts. If you exit fullscreen, the session pauses. This is a focus setting, not a proctoring or cheating detector.</span></div>
         <button className="primary-button" onClick={() => void start()}><Maximize size={15}/> Enter fullscreen & start interview</button>
       </div>}
+      {paused && !active && <div className="voice-paused"><strong>Interview paused</strong><p>Fullscreen was exited. Re-enter it to continue from the same question.</p><button className="primary-button" onClick={async () => { try { await document.documentElement.requestFullscreen(); setPaused(false); setActive(true); speak(currentQuestion); setNotice(''); } catch { setNotice('Fullscreen is required to resume this interview.'); } }}><Maximize size={14}/> Resume in fullscreen</button></div>}
       {active && <div className="voice-session">
         <div className="voice-session-top"><span><i/> SESSION LIVE</span><span><Clock3 size={14}/> {mmss}</span><span>QUESTION {questionIndex + 1} / {questionsForSession.current.length}</span></div>
         <div className="voice-question"><span className="eyebrow">INTERVIEWER ASKS</span><h3>{currentQuestion}</h3><button className="voice-secondary" onClick={() => speak(currentQuestion)}><Volume2 size={14}/> Repeat question</button></div>
@@ -227,7 +231,7 @@ export default function VoiceInterview({ targetRole }: { targetRole: string }) {
         <div className="voice-report-score"><span className="eyebrow">PRACTICE SUMMARY</span><strong>{average}<small>/100</small></strong><span>Answer delivery indicator</span></div>
         <div className="voice-report-details"><h3>{transcript.length} answers recorded · {mmss} elapsed</h3><p>This is heuristic practice feedback based on answer length, signposting and use of examples. It does not verify technical correctness or replace expert evaluation.</p>
           {transcript.map((item, index) => <article className="voice-answer-review" key={index}><strong>Q{index + 1}. {item.question}</strong><p>{item.answer}</p><div><span>{item.score.words} words</span><span>Structure {item.score.structure}/100</span><span>Examples {item.score.specificity}/100</span><b>{item.score.overall}/100</b></div></article>)}
-          <button className="primary-button" onClick={() => { setFinished(false); setTranscript([]); setQuestionIndex(0); setAnswer(''); setSeconds(0); }}><RotateCcw size={14}/> Set up another interview</button>
+          <button className="primary-button" onClick={() => { setFinished(false); setPaused(false); setTranscript([]); setQuestionIndex(0); setAnswer(''); setSeconds(0); }}><RotateCcw size={14}/> Set up another interview</button>
           {document.fullscreenElement && <button className="voice-text-button" onClick={() => void document.exitFullscreen()}>Exit fullscreen</button>}
         </div>
       </div>}
