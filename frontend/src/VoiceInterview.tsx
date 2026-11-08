@@ -100,18 +100,20 @@ export default function VoiceInterview({ targetRole, startCamera, cameraActive, 
   const roomRef = useRef<HTMLElement>(null)
   const [questionsForSession, setQuestionsForSession] = useState<string[]>([])
   const currentQuestion = questionsForSession[questionIndex] ?? ''
+  const cameraMetricsRef = useRef(cameraMetrics)
+  cameraMetricsRef.current = cameraMetrics
 
   useEffect(() => {
     if (!active || finished) return
     const timer = window.setInterval(() => setSeconds((value) => value + 1), 1000)
     const cameraTimer = window.setInterval(() => setCameraSamples((old) => ({
       total: old.total + 1,
-      face: old.face + (cameraMetrics.faceVisible ? 1 : 0),
-      screen: old.screen + (cameraMetrics.gaze === 'Generally toward screen' ? 1 : 0),
-      hands: old.hands + (cameraMetrics.handsVisible > 0 ? 1 : 0),
+      face: old.face + (cameraMetricsRef.current.faceVisible ? 1 : 0),
+      screen: old.screen + (cameraMetricsRef.current.gaze === 'Generally toward screen' ? 1 : 0),
+      hands: old.hands + (cameraMetricsRef.current.handsVisible > 0 ? 1 : 0),
     })), 1000)
     return () => { window.clearInterval(timer); window.clearInterval(cameraTimer) }
-  }, [active, finished, cameraMetrics])
+  }, [active, finished])
 
   useEffect(() => {
     const handleFullscreen = () => {
