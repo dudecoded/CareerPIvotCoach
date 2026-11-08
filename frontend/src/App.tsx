@@ -170,7 +170,7 @@ function App() {
       }
     })
     return () => { active = false }
-  }, [])
+  }, [accessToken])
 
   // Re-rank the curated catalogue whenever the learner's profile context changes.
   useEffect(() => {
@@ -187,7 +187,7 @@ function App() {
       if (active) console.error('Could not load personalised recommendations:', error)
     })
     return () => { active = false }
-  }, [tab, target, currentRole, selectedSkills.join('|'), profileForm.interests.join('|'), profileForm.learning_style])
+  }, [tab, target, currentRole, selectedSkills, profileForm])
 
   useEffect(() => {
     const saved: SavedState = { name, currentRole, target, experience, selectedSkills, skillProficiencies, goal, assessmentDone, tasks, chat }
