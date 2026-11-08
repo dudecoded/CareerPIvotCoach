@@ -14,7 +14,8 @@ CareerPivotCoach helps students and early-career professionals plan a transition
 - **Offline career coach:** context-aware guidance for learning plans, projects, skill gaps, and internship preparation. No API key required.
 - **Resume review:** paste resume text for a first-pass target-role keyword and writing review. The text is processed by the local backend and is not persisted.
 - **Interview preparation:** generate role-specific practice questions and answer guidance.
-- **AI Interview Studio (vision beta):** use a webcam preview with MediaPipe face and hand landmarks in the browser, plus periodic OpenCV face/eye-region and lighting checks through the local FastAPI backend. The current stage is camera setup and visual feedback; voice interviewing and answer evaluation are planned next.
+- **AI Interview Studio:** webcam preview with MediaPipe face and hand landmarks in the browser, plus periodic OpenCV face/eye-region and lighting checks through the local FastAPI backend.
+- **Fullscreen voice mock interviews:** fullscreen is required to start or resume a session; role-based question banks, spoken question playback, browser speech-to-text, editable transcripts, timed sessions, and a practice summary with transparent heuristic feedback.
 
 The resume review and offline coach are rule-based features. They are not an ATS, a substitute for human career advice, or a live generative AI model.
 
@@ -110,8 +111,10 @@ npm run build
 - Assessments are stored locally without user accounts or ownership boundaries. Do not expose this API publicly as a multi-user service until authentication and per-user authorization are implemented.
 - Browser local storage is device/browser-specific and is not a cloud backup.
 - The coach and career tools are deterministic/rule-based. A provider adapter and server-side secret management can be added later for live AI.
-- AI Interview Studio currently implements camera and visual landmark checks only. It does not determine dishonesty, intent, emotion, confidence, or candidate suitability. Eye-gaze estimates are approximate and affected by glasses, lighting, camera position, and model performance.
+- Interview Studio's visual signals are approximate and do not determine dishonesty, intent, emotion, confidence, or candidate suitability. Eye-gaze estimates are affected by glasses, lighting, camera position, and model performance.
+- Voice interviews use the browser Web Speech API where supported (Chrome/Edge recommended). Speech recognition availability and privacy behaviour vary by browser and may rely on an online service. A manual transcript editor is provided as a fallback.
+- Interview answer feedback is a transparent heuristic for answer length, signposting and examples. It does not grade factual or technical correctness, and must not be treated as an objective hiring score. Fullscreen is a focus requirement, not a proctoring or cheating-detection feature.
 - MediaPipe model assets are loaded by the browser from Google's model hosting/CDN on first use. The browser needs internet access for this initial download.
-- Face and hand landmark processing runs in the browser. Small periodic camera snapshots are sent to the local backend for OpenCV checks; the endpoint does not save images. The feature is opt-in and requires camera permission. Voice interviewing, transcription, and answer scoring are not implemented yet.
+- Face and hand landmark processing runs in the browser. Small periodic camera snapshots are sent to the local backend for OpenCV checks; the endpoint does not save images. The feature is opt-in and requires camera permission. Voice interview sessions use browser speech recognition and text-to-speech; no audio recording is stored by the app. Speech recognition may be processed by the browser vendor. The local practice summary uses heuristics only.
 - Career skill maps are starter maps and should be reviewed with current job descriptions and domain experts.
 - Production deployment should use PostgreSQL, migrations, environment-specific CORS, rate limits, monitoring, and security review.
