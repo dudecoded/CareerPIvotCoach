@@ -150,6 +150,45 @@ function App() {
     localStorage.setItem('cpc-theme', theme)
   }, [theme])
 
+  // Restore the signed-in account on refresh; the token is persisted by the API client.
+  useEffect(() => {
+    if (!accessToken) return
+    let active = true
+    getCurrentUser().then((user) => {
+      if (!active) return
+      setName(user.name)
+      if (user.profile && Object.keys(user.profile).length > 0) {
+        const profile = user.profile as Partial<UserProfile>
+        setProfileForm((current) => ({ ...current, ...profile }))
+        if (profile.current_role) setCurrentRole(profile.current_role)
+        if (profile.target_domain && Object.keys(careerSkills).includes(profile.target_domain)) setTarget(profile.target_domain as Career)
+      }
+    }).catch(() => {
+      if (active) {
+        setAccessToken('')
+        setAccessTokenState('')
+      }
+    })
+    return () => { active = false }
+  }, [])
+
+  // Re-rank the curated catalogue whenever the learner's profile context changes.
+  useEffect(() => {
+    if (tab !== 'Courses & inspiration') return
+    let active = true
+    getRecommendations({
+      ...profileForm,
+      target_domain: target,
+      current_role: currentRole,
+      skills: selectedSkills,
+    }).then((result) => {
+      if (active) setRecommendations(result)
+    }).catch((error) => {
+      if (active) console.error('Could not load personalised recommendations:', error)
+    })
+    return () => { active = false }
+  }, [tab, target, currentRole, selectedSkills.join('|'), profileForm.interests.join('|'), profileForm.learning_style])
+
   useEffect(() => {
     const saved: SavedState = { name, currentRole, target, experience, selectedSkills, skillProficiencies, goal, assessmentDone, tasks, chat }
     try {
