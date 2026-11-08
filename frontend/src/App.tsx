@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Search, Sun, Moon, UserRound, ArrowRight, Sparkles, X, LockKeyhole } from 'lucide-react'
 import './index.css'
+import InterviewStudio from './InterviewStudio'
 import { saveAssessment, sendCoachMessage, reviewResume, generateInterviewPrep, getAssessmentHistory, type AssessmentResult, type ResumeReviewResult, type InterviewPrepResult } from './api'
 
 type SkillProficiency = 'Beginner' | 'Intermediate' | 'Advanced'
 type Career = 'Data Analyst' | 'Frontend Developer' | 'Backend Developer' | 'ML Engineer' | 'Product Manager' | 'UI/UX Designer'
-type Tab = 'Overview' | 'Career assessment' | 'Skill gaps' | 'Roadmap' | 'Career paths' | 'AI coach' | 'Resume review' | 'Interview prep' | 'Assessment history'
+type Tab = 'Overview' | 'Career assessment' | 'Skill gaps' | 'Roadmap' | 'Career paths' | 'AI coach' | 'Resume review' | 'Interview prep' | 'Assessment history' | 'AI Interview Studio'
 
 const careerSkills: Record<Career, string[]> = {
   'Data Analyst': ['Excel', 'SQL', 'Python', 'Statistics', 'Data visualization', 'Communication'],
@@ -219,14 +220,14 @@ function App() {
     }
   }
 
-  const tabs: Tab[] = ['Overview', 'Career assessment', 'Skill gaps', 'Roadmap', 'Career paths', 'AI coach', 'Resume review', 'Interview prep', 'Assessment history']
+  const tabs: Tab[] = ['Overview', 'Career assessment', 'Skill gaps', 'Roadmap', 'Career paths', 'AI coach', 'Resume review', 'Interview prep', 'Assessment history', 'AI Interview Studio']
 
   return (
     <div className="app-shell">
       <aside className="sidebar">
         <div className="brand"><div className="brand-mark">CP</div><div><strong>CareerPivot</strong><span>CAREER BRIDGE ENGINE</span></div></div>
         <div className="workspace-label">WORKSPACE</div>
-        <nav>{tabs.map((item, index) => <button key={item} className={`nav-item ${tab === item ? 'active' : ''}`} onClick={() => { if (item === 'Assessment history') { setHistoryLoading(true); setHistoryError('') }; setTab(item) }}><span className="nav-icon">{['◉', '◎', '⌁', '↗', '◇', '✳', '▤', '☷', '◷'][index]}</span>{item}{item === 'Career assessment' && !assessmentDone && <i />}</button>)}</nav>
+        <nav>{tabs.map((item, index) => <button key={item} className={`nav-item ${tab === item ? 'active' : ''}`} onClick={() => { if (item === 'Assessment history') { setHistoryLoading(true); setHistoryError('') }; setTab(item) }}><span className="nav-icon">{['◉', '◎', '⌁', '↗', '◇', '✳', '▤', '☷', '◷', '◉'][index]}</span>{item}{item === 'Career assessment' && !assessmentDone && <i />}</button>)}</nav>
         <div className="sidebar-bottom"><div className="help-card"><div className="help-icon">✦</div><strong>Your next chapter starts here.</strong><p>Small, consistent steps create career momentum.</p><button onClick={() => setTab('Roadmap')}>View my roadmap →</button></div><div className="profile-mini"><div className="avatar">{name.trim().charAt(0).toUpperCase() || 'U'}</div><div><strong>{name || 'Your profile'}</strong><span>Personal workspace</span></div><span className="dots">•••</span></div></div>
       </aside>
 
@@ -320,6 +321,7 @@ function App() {
             <section className="panel"><div className="panel-heading"><div><h3>Your practice context</h3><p>Questions are tailored to your target role and selected skills.</p></div><span className="tag">PRACTICE SET</span></div><div className="form-footer"><span>Target: <strong>{target}</strong> · Experience: <strong>{experience}</strong></span><button className="primary-button" disabled={interviewLoading} onClick={async () => { setInterviewLoading(true); setInterviewError(''); try { setInterviewResult(await generateInterviewPrep(target === 'ML Engineer' ? 'Machine Learning Engineer' : target, selectedSkills, experience)); } catch (error) { setInterviewError(error instanceof Error ? error.message : 'Could not generate questions.'); } finally { setInterviewLoading(false); } }}>{interviewLoading ? 'Preparing…' : 'Generate practice questions →'}</button></div>{interviewError && <div className="notice" role="alert">{interviewError}</div>}</section>
             {interviewResult && <><div className="task-tip">{interviewResult.preparation_tip}</div><div className="interview-grid">{interviewResult.questions.map((item, index) => <article className="panel interview-card" key={item.category}><span className="eyebrow">QUESTION {index + 1} · {item.category}</span><h3>{item.question}</h3><p><strong>What to cover:</strong> {item.what_to_cover}</p></article>)}</div></>}
           </>}
+          {tab === 'AI Interview Studio' && <InterviewStudio targetRole={target} currentRole={currentRole} selectedSkills={selectedSkills} />}
           {tab === 'Assessment history' && <>
             <div className="page-intro"><div className="eyebrow">YOUR PROGRESS OVER TIME</div><h1>Every step <em>counts.</em></h1><p>Review assessments saved to the local CareerPivotCoach database.</p></div>
             {historyLoading && <div className="notice">Loading your assessment history…</div>}
