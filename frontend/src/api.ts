@@ -101,3 +101,19 @@ export function generateInterviewPrep(target_role: string, skills: string[], exp
     body: JSON.stringify({ target_role, skills, experience_level }),
   });
 }
+
+export type InterviewFrameAnalysis = {
+  face_count: number;
+  eyes_detected: boolean;
+  brightness: number;
+  face_centered: boolean;
+  camera_note: string;
+  privacy_note: string;
+};
+
+export function analyzeInterviewFrame(image_base64: string) {
+  return request<InterviewFrameAnalysis>("/api/interview/analyze-frame", {
+    method: "POST",
+    body: JSON.stringify({ image_base64 }),
+  });
+}
