@@ -73,10 +73,11 @@ function assessAnswer(answer: string) {
   return { overall, length, structure, specificity, words: words.length }
 }
 
-export default function VoiceInterview({ targetRole, startCamera, cameraActive, cameraMetrics }: {
+export default function VoiceInterview({ targetRole, startCamera, cameraActive, cameraStream, cameraMetrics }: {
   targetRole: string
   startCamera: () => Promise<boolean>
   cameraActive: boolean
+  cameraStream: MediaStream | null
   cameraMetrics: { faceVisible: boolean; handsVisible: number; gaze: string }
 }) {
   const [domain, setDomain] = useState('frontend')
@@ -98,6 +99,7 @@ export default function VoiceInterview({ targetRole, startCamera, cameraActive, 
   const [interim, setInterim] = useState('')
   const recognitionRef = useRef<Recognition | null>(null)
   const roomRef = useRef<HTMLElement>(null)
+  const liveVideoRef = useRef<HTMLVideoElement>(null)
   const [questionsForSession, setQuestionsForSession] = useState<string[]>([])
   const currentQuestion = questionsForSession[questionIndex] ?? ''
   const cameraMetricsRef = useRef(cameraMetrics)
@@ -261,7 +263,7 @@ export default function VoiceInterview({ targetRole, startCamera, cameraActive, 
       {paused && !active && <div className="voice-paused"><strong>Interview paused</strong><p>Fullscreen was exited. Re-enter it to continue from the same question.</p><button className="primary-button" onClick={async () => { try { await roomRef.current?.requestFullscreen(); setPaused(false); setActive(true); speak(currentQuestion); setNotice(''); } catch { setNotice('Fullscreen is required to resume this interview.'); } }}><Maximize size={14}/> Resume in fullscreen</button></div>}
       {active && <div className="voice-session">
         <div className="voice-session-top"><span><i/> SESSION LIVE</span><span><Clock3 size={14}/> {mmss} remaining</span><span className="voice-camera-live">● CAMERA LIVE</span><span>QUESTION {questionIndex + 1} / {questionsForSession.length}</span></div>
-        <div className="voice-live-camera-strip"><span>Face: {cameraMetrics.faceVisible ? "visible" : "not detected"}</span><span>Gaze: {cameraMetrics.gaze}</span><span>Hands: {cameraMetrics.handsVisible}/2</span></div>
+        <div className="voice-live-preview"><video ref={liveVideoRef} autoPlay muted playsInline aria-label="Live interview camera preview"/><div className="voice-live-camera-strip"><span>Face: {cameraMetrics.faceVisible ? "visible" : "not detected"}</span><span>Gaze: {cameraMetrics.gaze}</span><span>Hands: {cameraMetrics.handsVisible}/2</span></div>
         <div className="voice-question"><span className="eyebrow">INTERVIEWER ASKS</span><h3>{currentQuestion}</h3><button className="voice-secondary" onClick={() => speak(currentQuestion)}><Volume2 size={14}/> Repeat question</button></div>
         <div className="voice-answer-label"><strong>Your answer</strong><span>{listening ? 'Microphone active' : 'Microphone off'}</span></div>
         <textarea value={answer} onChange={(event) => setAnswer(event.target.value)} placeholder="Your speech transcript appears here. You can also type or edit your answer…" rows={6}/>
