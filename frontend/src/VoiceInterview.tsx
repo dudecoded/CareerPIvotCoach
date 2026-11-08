@@ -76,10 +76,8 @@ export default function VoiceInterview({ targetRole }: { targetRole: string }) {
   const [notice, setNotice] = useState('')
   const [interim, setInterim] = useState('')
   const recognitionRef = useRef<Recognition | null>(null)
-  const answerRef = useRef(answer)
-  const questionsForSession = useRef<string[]>([])
-  answerRef.current = answer
-  const currentQuestion = questionsForSession.current[questionIndex]
+  const [questionsForSession, setQuestionsForSession] = useState<string[]>([])
+  const currentQuestion = questionsForSession[questionIndex] ?? ''
 
   useEffect(() => {
     if (!active || finished) return
@@ -116,7 +114,7 @@ export default function VoiceInterview({ targetRole }: { targetRole: string }) {
   }
 
   const start = async () => {
-    questionsForSession.current = [...questions].sort(() => Math.random() - .5).slice(0, count)
+    setQuestionsForSession([...questions].sort(() => Math.random() - .5).slice(0, count))
     setQuestionIndex(0)
     setTranscript([])
     setAnswer('')
@@ -133,7 +131,7 @@ export default function VoiceInterview({ targetRole }: { targetRole: string }) {
     setNotice('')
     setActive(true)
     setPaused(false)
-    speak(questionsForSession.current[0])
+    speak([...questions].sort(() => Math.random() - .5).slice(0, count)[0] ?? '')
   }
 
   const startListening = () => {
@@ -186,7 +184,7 @@ export default function VoiceInterview({ targetRole }: { targetRole: string }) {
     setTranscript((previous) => [...previous, { question, answer: clean, score: assessAnswer(clean) }])
     setAnswer('')
     setInterim('')
-    if (questionIndex + 1 >= questionsForSession.current.length) {
+    if (questionIndex + 1 >= questionsForSession.length) {
       setActive(false)
       setFinished(true)
       window.speechSynthesis?.cancel()
@@ -194,7 +192,7 @@ export default function VoiceInterview({ targetRole }: { targetRole: string }) {
     }
     const next = questionIndex + 1
     setQuestionIndex(next)
-    speak(questionsForSession.current[next])
+    speak(questionsForSession[next])
     setNotice('Answer saved. Here is your next question.')
   }
 
