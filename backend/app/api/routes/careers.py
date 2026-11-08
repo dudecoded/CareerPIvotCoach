@@ -19,7 +19,7 @@ def skill_match(payload: SkillMatchRequest):
     # Unsupervised character n-gram TF-IDF similarity surfaces related terminology.
     # It is advisory only: fuzzy matches are not automatically credited in readiness.
     vectorizer = TfidfVectorizer(analyzer="char_wb", ngram_range=(2,4), lowercase=True)
-    vocabulary = required + [s.strip() for s in payload.skills if s.strip()]
+    provided = [s.strip() for s in payload.skills if s.strip()]\n    vocabulary = required + provided
     if len(vocabulary) < 2: return {"matches":[],"method":"TF-IDF character n-gram similarity","note":"Similarity suggestions are advisory; only confirmed skills count toward readiness."}
     matrix = vectorizer.fit_transform(vocabulary)
     candidates = []
