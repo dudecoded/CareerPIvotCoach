@@ -51,6 +51,7 @@ export default function InterviewStudio({ targetRole, currentRole, selectedSkill
   const lastVisionRef = useRef(0)
   const lastOpenCvRef = useRef(0)
   const [cameraActive, setCameraActive] = useState(false)
+  const [cameraStream, setCameraStream] = useState<MediaStream | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [visionReady, setVisionReady] = useState(false)
@@ -63,6 +64,7 @@ export default function InterviewStudio({ targetRole, currentRole, selectedSkill
     animationRef.current = null
     streamRef.current?.getTracks().forEach((track) => track.stop())
     streamRef.current = null
+    setCameraStream(null)
     faceRef.current?.close()
     handRef.current?.close()
     faceRef.current = null
@@ -87,6 +89,7 @@ export default function InterviewStudio({ targetRole, currentRole, selectedSkill
         audio: false,
       })
       streamRef.current = stream
+      setCameraStream(stream)
       if (!videoRef.current) throw new Error('Camera preview could not be created.')
       videoRef.current.srcObject = stream
       await videoRef.current.play()
@@ -174,6 +177,7 @@ export default function InterviewStudio({ targetRole, currentRole, selectedSkill
     } catch (reason) {
       streamRef.current?.getTracks().forEach((track) => track.stop())
       streamRef.current = null
+      setCameraStream(null)
       setCameraActive(false)
       setError(reason instanceof Error ? reason.message : 'Could not start the camera or load the vision models.')
       return false
@@ -225,7 +229,7 @@ export default function InterviewStudio({ targetRole, currentRole, selectedSkill
         </section>
       </div>
 
-      <VoiceInterview targetRole={targetRole} startCamera={startCamera} cameraActive={cameraActive} cameraMetrics={metrics} />
+      <VoiceInterview targetRole={targetRole} startCamera={startCamera} cameraActive={cameraActive} cameraStream={cameraStream} cameraMetrics={metrics} />
 
       <div className="studio-bottom-grid">
         <section className="panel studio-guidance"><div className="studio-guidance-icon"><Eye size={18}/></div><div><h3>Natural eye contact</h3><p>Look towards the camera when speaking, but feel free to glance away naturally while thinking. The gaze estimate is approximate and can be affected by glasses, lighting and camera angle.</p></div></section>
