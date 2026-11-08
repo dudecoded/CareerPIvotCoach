@@ -114,7 +114,8 @@ export default function VoiceInterview({ targetRole }: { targetRole: string }) {
   }
 
   const start = async () => {
-    setQuestionsForSession([...questions].sort(() => Math.random() - .5).slice(0, count))
+    const sessionQuestions = [...questions].sort(() => Math.random() - .5).slice(0, count)
+    setQuestionsForSession(sessionQuestions)
     setQuestionIndex(0)
     setTranscript([])
     setAnswer('')
@@ -131,7 +132,7 @@ export default function VoiceInterview({ targetRole }: { targetRole: string }) {
     setNotice('')
     setActive(true)
     setPaused(false)
-    speak([...questions].sort(() => Math.random() - .5).slice(0, count)[0] ?? '')
+    speak(sessionQuestions[0] ?? '')
   }
 
   const startListening = () => {
