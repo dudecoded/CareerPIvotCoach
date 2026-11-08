@@ -75,7 +75,7 @@ export default function InterviewStudio({ targetRole, currentRole, selectedSkill
 
   useEffect(() => () => stopCamera(), [stopCamera])
 
-  const startCamera = async () => {
+  const startCamera = async (): Promise<boolean> => {
     setError('')
     setLoading(true)
     try {
@@ -170,11 +170,13 @@ export default function InterviewStudio({ targetRole, currentRole, selectedSkill
         animationRef.current = requestAnimationFrame(analyse)
       }
       animationRef.current = requestAnimationFrame(analyse)
+      return true
     } catch (reason) {
       streamRef.current?.getTracks().forEach((track) => track.stop())
       streamRef.current = null
       setCameraActive(false)
       setError(reason instanceof Error ? reason.message : 'Could not start the camera or load the vision models.')
+      return false
     } finally {
       setLoading(false)
     }
@@ -190,7 +192,7 @@ export default function InterviewStudio({ targetRole, currentRole, selectedSkill
 
       <div className="interview-studio-banner">
         <div className="studio-banner-icon"><Sparkles size={19}/></div>
-        <div><strong>Camera confidence check</strong><p>This first build focuses on live camera and landmark tracking. The voice interviewer and answer evaluation are the next development stage.</p></div>
+        <div><strong>Camera confidence check</strong><p>The camera remains active during the voice interview. Face, approximate gaze and hand landmarks are sampled while you answer.</p></div>
         <span className="studio-stage-pill">VISION BETA</span>
       </div>
 
@@ -223,7 +225,7 @@ export default function InterviewStudio({ targetRole, currentRole, selectedSkill
         </section>
       </div>
 
-      <VoiceInterview targetRole={targetRole} />
+      <VoiceInterview targetRole={targetRole} startCamera={startCamera} cameraActive={cameraActive} cameraMetrics={metrics} />
 
       <div className="studio-bottom-grid">
         <section className="panel studio-guidance"><div className="studio-guidance-icon"><Eye size={18}/></div><div><h3>Natural eye contact</h3><p>Look towards the camera when speaking, but feel free to glance away naturally while thinking. The gaze estimate is approximate and can be affected by glasses, lighting and camera angle.</p></div></section>
