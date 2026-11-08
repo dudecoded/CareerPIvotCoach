@@ -45,6 +45,8 @@ const QUESTION_BANK: Record<string, string[]> = {
 
 const DOMAIN_QUESTIONS: Record<string, string[]> = {
   frontend: QUESTION_BANK.frontend,
+  fullstack: [...QUESTION_BANK.frontend.slice(0, 4), 'How would you design a full-stack application from database to user interface?', 'How do you handle API errors and loading states across frontend and backend?', 'Describe an end-to-end application you built.'],
+  ai: QUESTION_BANK.data,
   backend: ['Design a REST API for user management.', 'Explain authentication versus authorization.', 'How do database indexes affect performance?', 'How would you debug a slow API?', 'Explain transactions and ACID.', 'How would you secure an API?', 'Describe a backend project and a trade-off you made.'],
   data: QUESTION_BANK.data,
   cybersecurity: ['Explain vulnerability, threat and risk.', 'How would you investigate suspicious login activity?', 'Compare symmetric and asymmetric encryption.', 'How would you prioritise security findings?', 'Explain SQL injection and prevention.', 'How would you investigate an intrusion alert?', 'Describe a security project and its evaluation.'],
