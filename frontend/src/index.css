@@ -110,3 +110,8 @@ html[data-theme='dark'] .stat-card,html[data-theme='dark'] .panel,html[data-them
 .voice-camera-report{display:grid;margin:12px 0}
 .voice-camera-report small{opacity:.75}
 @media(max-width:640px){.voice-config-grid{grid-template-columns:1fr}}
+
+.voice-live-preview{display:grid;grid-template-columns:minmax(150px,220px) minmax(0,1fr);gap:12px;align-items:center;margin:12px 0}
+.voice-live-preview video{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:12px;background:#090d14;border:1px solid var(--border)}
+.voice-live-preview .voice-live-camera-strip{margin:0;min-height:100%;align-content:center}
+@media(max-width:640px){.voice-live-preview{grid-template-columns:1fr}.voice-live-preview video{max-width:280px}}
