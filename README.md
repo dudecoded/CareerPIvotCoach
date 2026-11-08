@@ -2,15 +2,15 @@
 
 CareerPivotCoach helps students and early-career professionals plan a transition into a target career. It combines a skills assessment, proficiency-weighted readiness estimate, gap analysis, a 90-day starter roadmap, progress tracking, an offline career coach, resume keyword review, and interview practice.
 
-> **Status:** Active development. The current application is a local-first MVP. It does not yet include user authentication, cloud account sync, or a live LLM integration.
+> **Status:** Active development. Email/password accounts, account-owned assessment history, profile onboarding, domain learning guides and per-account analytics are now available on the feature branch. OAuth providers and production deployment hardening are not yet configured.
 
 ## Features
 
 - **Career assessment:** choose a target role, record current skills, and rate each skill as Beginner, Intermediate, or Advanced.
-- **Weighted readiness estimate:** Beginner = 0.35, Intermediate = 0.70, Advanced = 1.0. The score is a planning signal, not a prediction of employability.
+- **Weighted readiness estimate:** Beginner = 0.35, Intermediate = 0.70, Advanced = 1.0. The score is a planning signal, not a prediction of employability.\n- **Experimental ML skill similarity:** an unsupervised TF-IDF character n-gram endpoint suggests related skill terms. Suggestions require user confirmation and are not automatically counted as proficiency.
 - **Skill gap analysis:** compare selected skills with the target-role skill map.
 - **90-day roadmap:** review milestones and mark progress. Frontend preferences and task progress persist in browser local storage.
-- **Assessment history:** view saved assessments in the local SQLite database.
+- **Multi-user accounts:** email/password registration and login with password hashing and signed bearer tokens. Assessment records and analytics are scoped to the authenticated account.\n- **Personal profile:** save education, current role, target domain, interests, goals, learning preference and weekly study availability.\n- **Domain learning:** curated starter topics, portfolio projects and practice prompts for supported career domains.\n- **Assessment history and analytics:** view account-owned assessments and a readiness-over-time chart backed by SQLite.
 - **Offline career coach:** context-aware guidance for learning plans, projects, skill gaps, and internship preparation. No API key required.
 - **Resume review:** paste resume text for a first-pass target-role keyword and writing review. The text is processed by the local backend and is not persisted.
 - **Interview preparation:** generate role-specific practice questions and answer guidance.
@@ -97,7 +97,7 @@ npm run build
 
 | Method | Endpoint | Purpose |
 |---|---|---|
-| GET | `/api/health` | Health check |
+| GET | `/api/health` | Health check |\n| POST | `/api/auth/register` | Create an account |\n| POST | `/api/auth/login` | Sign in and receive an access token |\n| GET | `/api/auth/me` | Current authenticated account |\n| GET/PUT | `/api/profile` | Read or update personal profile |\n| GET | `/api/analytics/summary` | Account-owned progress analytics |\n| GET | `/api/learning/{domain}` | Domain learning guide |\n| POST | `/api/careers/skill-match` | Experimental TF-IDF skill similarity suggestions |
 | POST | `/api/careers/analyze` | Analyse a career profile without saving |
 | POST | `/api/assessments` | Analyse and save an assessment |
 | GET | `/api/assessments` | List recent saved assessments |
@@ -106,9 +106,9 @@ npm run build
 | POST | `/api/tools/interview-prep` | Interview practice questions |
 | POST | `/api/interview/analyze-frame` | Ephemeral OpenCV webcam frame analysis |
 
-## Current limitations and next steps
+## Account and security setup\n\nSet a unique secret before running outside local development. In PowerShell, set `$env:CPC_SECRET_KEY` to a long random value before starting Uvicorn. The built-in token lasts seven days; there is no refresh-token or server-side revocation flow yet. Passwords are hashed with PBKDF2-HMAC-SHA256. Configure HTTPS, rate limiting, backups, secret management, database migrations and a security review before public deployment. Google/GitHub OAuth is not enabled. Existing pre-account assessments are retained as legacy rows and are not visible in any new user's history.\n\n## Current limitations and next steps
 
-- Assessments are stored locally without user accounts or ownership boundaries. Do not expose this API publicly as a multi-user service until authentication and per-user authorization are implemented.
+- The application now has basic email/password accounts and ownership filtering for assessment history. Other features (for example interview reports, resume review and coach conversations) are not yet persisted or user-scoped. Do not treat this as production-ready authentication.
 - Browser local storage is device/browser-specific and is not a cloud backup.
 - The coach and career tools are deterministic/rule-based. A provider adapter and server-side secret management can be added later for live AI.
 - Interview Studio's visual signals are approximate and do not determine dishonesty, intent, emotion, confidence, or candidate suitability. Eye-gaze estimates are affected by glasses, lighting, camera position, and model performance.
