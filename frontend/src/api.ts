@@ -15,6 +15,9 @@ export function getCurrentUser() { return request<AuthUser>("/api/auth/me"); }
 export type UserProfile = { education: string; current_role: string; target_domain: string; experience_level: string; interests: string[]; goals: string[]; learning_style: string; hours_per_week: number; skills: string[] };
 export function saveUserProfile(profile: UserProfile) { return request<{ profile: UserProfile }>("/api/profile", { method: "PUT", body: JSON.stringify(profile) }); }
 export function getDomainLearning(domain: string) { return request<{ domain: string; overview: string; topics: string[]; projects: string[]; practice: string[] }>(`/api/learning/${encodeURIComponent(domain)}`); }
+export function getRecommendations(profile: UserProfile) {
+  return request<{ career_paths: string[]; projects: string[]; courses: { title: string; provider: string; url: string; reason: string }[]; books: { title: string; author: string; reason: string }[]; creators: { name: string; platform: string; focus: string; url: string }[]; trajectory: string[]; quote: { text: string; author: string } }>("/api/learning/recommendations", { method: "POST", body: JSON.stringify(profile) });
+}
 export function getAnalytics() { return request<{ assessment_count: number; latest: number | null; readiness_history: { date: string; score: number; target_role: string }[]; matched_skill_counts: { date: string; count: number }[] }>("/api/analytics/summary"); }
 
 const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "http://127.0.0.1:8000";
