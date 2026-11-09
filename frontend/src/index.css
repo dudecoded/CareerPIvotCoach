@@ -147,3 +147,70 @@ html[data-theme='dark'] .stat-card,html[data-theme='dark'] .panel,html[data-them
 .focus-skill-panel .primary-button{margin-top:8px}
 @media(max-width:1100px){.dashboard-detail-grid{grid-template-columns:1fr 1fr}.focus-skill-panel{grid-column:1/-1}}
 @media(max-width:650px){.dashboard-detail-grid{grid-template-columns:1fr}.focus-skill-panel{grid-column:auto}.profile-progress-meta{align-items:flex-start;flex-direction:column}.weekly-split{gap:6px}.weekly-split div{padding:9px 7px}.weekly-split strong{font-size:12px}.weekly-split span{font-size:9px}}
+
+
+
+/* Editorial / Obys-inspired public landing direction */
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500;6..96,600&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+.landing-shell{background:#f7f5ee;color:#111!important}
+.public-landing{position:relative;isolation:isolate;background-color:#f7f5ee;background-image:linear-gradient(rgba(25,25,25,.065) 1px,transparent 1px),linear-gradient(90deg,rgba(25,25,25,.065) 1px,transparent 1px);background-size:28px 28px;color:#111}
+.public-landing:before,.public-landing:after{content:"";position:absolute;z-index:-1;pointer-events:none;width:250px;height:520px;border:1.5px solid #171717;border-radius:48% 52% 42% 58%;opacity:.65}
+.public-landing:before{top:100px;left:-205px;transform:rotate(-24deg)}
+.public-landing:after{top:80px;right:-210px;transform:rotate(27deg)}
+.landing-nav{height:76px;max-width:1320px;border-bottom:1px solid rgba(0,0,0,.16)}
+.landing-brand{font-family:'Space Grotesk',sans-serif;color:#111}
+.landing-brand .brand-mark{background:#111!important;color:#fff!important;border-radius:2px!important}
+.landing-brand small{color:#777}
+.landing-nav-links a,.landing-login{font-family:'DM Sans',sans-serif;color:#252525}
+.landing-nav-links a:hover,.landing-login:hover{color:#1466bb}
+.landing-nav-actions .primary-button,.landing-hero-actions .primary-button,.landing-bottom .primary-button{background:#111;color:#fff;border-radius:2px;box-shadow:4px 4px 0 #2e78c5;transition:transform .2s,box-shadow .2s}
+.landing-nav-actions .primary-button:hover,.landing-hero-actions .primary-button:hover,.landing-bottom .primary-button:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 #2e78c5}
+.editorial-hero{max-width:1320px;min-height:680px;padding:28px 44px 52px;grid-template-columns:.88fr 1.12fr;gap:26px}
+.editorial-topline{grid-column:1/-1;display:flex;justify-content:space-between;padding:0 4px 14px;border-bottom:1px solid rgba(0,0,0,.2);font:700 9px 'Space Grotesk',sans-serif;letter-spacing:1.5px;color:#555}
+.landing-kicker{border:1px solid #111;border-radius:0;background:transparent;color:#111;font:700 9px 'Space Grotesk',sans-serif;letter-spacing:1.5px}
+.landing-hero-copy h1{font:700 clamp(58px,7vw,104px)/.91 'Space Grotesk',sans-serif;letter-spacing:-.085em;color:#101010;margin:25px 0 22px}
+.landing-hero-copy h1 em{font:500 .98em/.9 'Bodoni Moda',serif;color:#2b70b9;letter-spacing:-.075em}
+.landing-hero-copy>p{max-width:430px;color:#555;font:400 14px/1.9 'DM Sans',sans-serif}
+.landing-secondary{font:700 10px 'Space Grotesk',sans-serif;color:#171717}
+.landing-proof{border-top:1px solid rgba(0,0,0,.2);padding-top:17px;max-width:350px}
+.landing-proof strong{font:700 10px 'Space Grotesk',sans-serif}
+.landing-proof small{font:400 9px 'DM Sans',sans-serif;color:#666}
+.editorial-art{height:490px;display:flex;flex-direction:column;justify-content:center;gap:12px}
+.poster-black{position:relative;width:100%;height:390px;background:#080808;display:grid;place-items:center;overflow:visible}
+.poster-label{position:absolute;left:22px;top:18px;color:#f5f1e7;font:700 9px/1.5 'Space Grotesk',sans-serif;letter-spacing:1.4px}
+.career-scribble{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 7px 0 rgba(0,0,0,.18));transform:rotate(-3deg) scale(1.04)}
+.scribble-shadow{fill:#174b82;stroke:#050505;stroke-width:9;stroke-linejoin:round}
+.scribble-blue{fill:#4b94d6;stroke:#050505;stroke-width:9;stroke-linejoin:round}
+.scribble-line{fill:none;stroke:#07111d;stroke-width:8;stroke-linecap:round}
+.scribble-highlight{fill:none;stroke:#f8f7f1;stroke-width:10;stroke-linecap:round}
+.poster-sticker{position:absolute;z-index:2;padding:11px 13px;background:#f7f5ee;border:1.5px solid #111;box-shadow:4px 4px 0 #2e78c5;font:800 9px/1.35 'Space Grotesk',sans-serif;letter-spacing:.6px}
+.sticker-a{left:-18px;bottom:34px;transform:rotate(-7deg)}
+.sticker-b{right:-16px;top:54px;transform:rotate(6deg)}
+.poster-number{position:absolute;right:10px;bottom:-57px;font:700 clamp(44px,6vw,76px)/1 'Space Grotesk',sans-serif;letter-spacing:-.09em;color:#111}
+.art-caption{display:flex;justify-content:space-between;font:700 8px 'Space Grotesk',sans-serif;letter-spacing:1.4px;color:#444}
+.landing-stats{border:1px solid #111;border-radius:0;box-shadow:5px 5px 0 #2e78c5;background:#f7f5ee}
+.landing-stats div{border-color:rgba(0,0,0,.2)}
+.landing-stats strong{font:700 22px 'Space Grotesk',sans-serif;color:#2b70b9}
+.landing-stats span{font:700 10px 'DM Sans',sans-serif;color:#222}
+.landing-section-heading h2{font:700 clamp(36px,5vw,60px)/.98 'Space Grotesk',sans-serif;letter-spacing:-.07em;color:#111}
+.landing-section-heading h2 em{font:500 .95em 'Bodoni Moda',serif;color:#2b70b9}
+.landing-section-heading>p{font:400 12px/1.8 'DM Sans',sans-serif;color:#5c5c5c}
+.landing-feature,.landing-career-card{border:1px solid #111;border-radius:0;background:#f7f5ee;box-shadow:4px 4px 0 rgba(0,0,0,.08)}
+.landing-feature:hover,.landing-career-card:hover{transform:translate(-3px,-3px);box-shadow:7px 7px 0 #2e78c5}
+.landing-feature>span{border-radius:0;background:#111;color:#fff}
+.landing-feature small,.landing-career-card b{font-family:'Space Grotesk',sans-serif;color:#2b70b9}
+.landing-feature h3,.landing-career-card strong{font:700 16px 'Space Grotesk',sans-serif;color:#111}
+.landing-feature p,.landing-career-card small{font:400 11px/1.8 'DM Sans',sans-serif;color:#5d5d5d}
+.landing-quote{background:#111;border:0;color:#f7f5ee}
+.landing-quote>span{color:#79b8ed}
+.landing-quote blockquote{font:500 clamp(24px,4vw,42px)/1.2 'Bodoni Moda',serif;color:#f7f5ee}
+.landing-quote small{color:#aaa}
+.landing-bottom{border-radius:0;background:#111;box-shadow:8px 8px 0 #2e78c5}
+.landing-bottom h2{font:700 clamp(32px,4vw,48px)/1 'Space Grotesk',sans-serif;letter-spacing:-.06em}
+.landing-bottom h2 em{font:500 1em 'Bodoni Moda',serif;color:#79b8ed}
+.landing-bottom .eyebrow{color:#79b8ed}
+.landing-bottom p{font:400 11px/1.8 'DM Sans',sans-serif;color:#c9c9c9}
+.landing-footer{border-color:rgba(0,0,0,.25);font-family:'DM Sans',sans-serif;color:#555}
+.landing-footer button{font-family:'Space Grotesk',sans-serif;color:#1d65a5}
+@media(max-width:800px){.editorial-hero{grid-template-columns:1fr;padding:30px 25px 35px}.editorial-topline{font-size:8px}.editorial-art{height:390px}.poster-black{height:310px}.poster-number{bottom:-42px}.sticker-a{left:-8px}.sticker-b{right:-8px}}
+@media(max-width:520px){.editorial-hero{padding:25px 20px}.landing-hero-copy h1{font-size:clamp(54px,16vw,78px)}.editorial-art{height:300px;margin:10px 0 20px}.poster-black{height:235px}.poster-label{font-size:7px}.poster-sticker{font-size:7px;padding:8px}.poster-number{font-size:42px;bottom:-35px}.art-caption{font-size:6px}.editorial-topline{letter-spacing:.8px}}
