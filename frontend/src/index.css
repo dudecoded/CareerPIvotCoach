@@ -811,3 +811,92 @@ button{transition:transform .22s ease,box-shadow .22s ease,background-color .22s
 .app-shell[data-theme="dark"] .notification-row:hover{background:#1b2b4b}
 .app-shell[data-theme="dark"] .notification-popover-heading button{color:#81d9ff}
 @media(max-width:650px){.notification-popover{right:0;top:calc(100% + 8px)}}
+
+
+/* Contrast and hierarchy polish — preserve the existing cream / ink / blue palette */
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .stat-card,
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .dashboard-detail-grid .panel,
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .bottom-grid .panel{
+  background:#fbfaf6!important;color:#171717!important;border-color:#c8c2b6!important;
+  box-shadow:3px 3px 0 rgba(43,112,185,.14)!important
+}
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .stat-card *,
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .dashboard-detail-grid .panel *,
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .bottom-grid .panel *{
+  -webkit-text-fill:initial
+}
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .stat-card .stat-value,
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .stat-card .stat-value small,
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .dashboard-detail-grid h3,
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .bottom-grid h3,
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .bottom-grid h4,
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .dashboard-detail-grid .completion-score{
+  color:#171717!important;-webkit-text-fill-color:#171717!important
+}
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .stat-card p,
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .dashboard-detail-grid p,
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .dashboard-detail-grid small,
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .bottom-grid p,
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .profile-progress-meta,
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .weekly-split span{
+  color:#5c5a55!important;-webkit-text-fill-color:#5c5a55!important
+}
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .dashboard-detail-grid .eyebrow,
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .bottom-grid .tag{
+  color:#286cae!important;-webkit-text-fill-color:#286cae!important
+}
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .quote-panel,
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .bottom-grid .quote-panel{
+  background:#111!important;color:#f7f5ee!important;border-color:#111!important
+}
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .quote-panel p,
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .quote-panel span{
+  color:#f7f5ee!important;-webkit-text-fill-color:#f7f5ee!important
+}
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .quote-panel .quote-mark,
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .quote-panel .quote-decoration{color:#79b8ed!important}
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .guided-route{
+  background:#fbfaf6!important;border-color:#c8c2b6!important
+}
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .guided-route strong{color:#171717!important}
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .guided-route small{color:#5c5a55!important}
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .guided-route .route-arrow,
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .route-connector{color:#286cae!important}
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .welcome-row h1{color:#f7f5ee!important}
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .welcome-row h1 em{color:#79d9ed!important;-webkit-text-fill-color:#79d9ed!important}
+.app-shell[data-theme="dark"]:not(.landing-shell) .content .welcome-row .subheading{color:#c2c9d8!important}
+.app-shell[data-theme="dark"].landing-shell .landing-orbit-section{
+  background:#0b1020!important;border-color:rgba(121,184,237,.25)!important;
+  background-image:radial-gradient(circle at 75% 48%,rgba(43,112,185,.14),transparent 38%),linear-gradient(rgba(121,184,237,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(121,184,237,.045) 1px,transparent 1px)!important;
+  background-size:auto,40px 40px,40px 40px!important
+}
+.app-shell[data-theme="dark"].landing-shell .orbit-copy h2{color:#f7f5ee!important}
+.app-shell[data-theme="dark"].landing-shell .orbit-copy h2 em{color:#79b8ed!important}
+.app-shell[data-theme="dark"].landing-shell .orbit-copy p{color:#c2c9d8!important}
+.app-shell[data-theme="dark"].landing-shell .orbit-copy .eyebrow,
+.app-shell[data-theme="dark"].landing-shell .career-wheel-hint>span{color:#79b8ed!important}
+.app-shell[data-theme="dark"].landing-shell .career-wheel-hint>b{color:#f7f5ee!important}
+.app-shell[data-theme="dark"].landing-shell .career-wheel-hint>small{color:#b7c5df!important}
+.app-shell[data-theme="dark"].landing-shell .career-wheel-disc{
+  background:radial-gradient(circle at center,#10182a 0 18%,transparent 18.3%),repeating-radial-gradient(circle at center,transparent 0 62px,rgba(121,184,237,.22) 63px 64px),conic-gradient(from -30deg,rgba(43,112,185,.24) 0deg 58deg,rgba(121,184,237,.035) 60deg 118deg,rgba(43,112,185,.2) 120deg 178deg,rgba(121,184,237,.035) 180deg 238deg,rgba(43,112,185,.2) 240deg 298deg,rgba(121,184,237,.035) 300deg 358deg);
+  box-shadow:inset 0 0 0 10px rgba(121,184,237,.07),0 15px 40px rgba(0,0,0,.25)
+}
+.app-shell[data-theme="dark"].landing-shell .career-wheel-disc:after{border-color:rgba(121,184,237,.35)}
+.app-shell[data-theme="dark"].landing-shell .career-wheel-center{background:#05070d;border-color:#f7f5ee;color:#f7f5ee}
+.app-shell[data-theme="dark"].landing-shell .career-wheel-node{background:#fbfaf6;color:#171717;border-color:#171717;box-shadow:3px 3px 0 #2b70b9}
+.app-shell[data-theme="dark"].landing-shell .career-wheel-node>small{color:#555!important}
+.app-shell[data-theme="dark"].landing-shell .career-wheel-controls button{background:#fbfaf6;color:#171717;border-color:#79b8ed}
+.app-shell[data-theme="dark"].landing-shell .career-wheel-controls .wheel-spin-button{background:#f7f5ee;color:#111}
+.app-shell[data-theme="dark"].landing-shell .career-wheel-controls .wheel-spin-button:hover{background:#79b8ed}
+@media(prefers-reduced-motion:no-preference){
+  .app-shell:not(.landing-shell) .content .stat-card,
+  .app-shell:not(.landing-shell) .content .dashboard-detail-grid .panel,
+  .app-shell:not(.landing-shell) .content .bottom-grid .panel{transition:transform .28s ease,box-shadow .28s ease}
+  .app-shell:not(.landing-shell) .content .dashboard-detail-grid .panel:hover,
+  .app-shell:not(.landing-shell) .content .bottom-grid .panel:hover{transform:translateY(-4px);box-shadow:6px 7px 0 rgba(43,112,185,.2)!important}
+}
+@media(max-width:760px){
+  .app-shell:not(.landing-shell) .content .dashboard-detail-grid{grid-template-columns:1fr}
+  .app-shell:not(.landing-shell) .content .bottom-grid{grid-template-columns:1fr}
+  .app-shell[data-theme="dark"].landing-shell .career-wheel-disc{width:min(100%,350px)}
+}
