@@ -12,7 +12,7 @@ export async function authenticate(mode: "login" | "signup", payload: { name?: s
   return result.user;
 }
 export function getCurrentUser() { return request<AuthUser>("/api/auth/me"); }
-export type UserProfile = { education: string; current_role: string; target_domain: string; experience_level: string; interests: string[]; goals: string[]; learning_style: string; hours_per_week: number; skills: string[] };
+export type UserProfile = { education: string; current_role: string; target_domain: string; experience_level: string; interests: string[]; goals: string[]; learning_style: string; hours_per_week: number; skills: string[]; social_links?: Record<string,string> };
 export function saveUserProfile(profile: UserProfile) { return request<{ profile: UserProfile }>("/api/profile", { method: "PUT", body: JSON.stringify(profile) }); }
 export function getDomainLearning(domain: string) { return request<{ domain: string; overview: string; topics: string[]; projects: string[]; practice: string[] }>(`/api/learning/${encodeURIComponent(domain)}`); }
 export function getRecommendations(profile: UserProfile) {
