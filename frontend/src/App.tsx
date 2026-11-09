@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Search, Sun, Moon, UserRound, ArrowRight, Sparkles, X, LockKeyhole } from 'lucide-react'
 import './index.css'
 import InterviewStudio from './InterviewStudio'
-import { saveAssessment, sendCoachMessage, reviewResume, generateInterviewPrep, getAssessmentHistory, authenticate, setAccessToken, saveUserProfile, getDomainLearning, getAnalytics, getCurrentUser, getRecommendations, type UserProfile, type AssessmentResult, type ResumeReviewResult, type InterviewPrepResult } from './api'
+import { saveAssessment, sendCoachMessage, reviewResume, generateInterviewPrep, getAssessmentHistory, authenticate, authenticateWithGoogle, setAccessToken, saveUserProfile, getDomainLearning, getAnalytics, getCurrentUser, getRecommendations, type UserProfile, type AssessmentResult, type ResumeReviewResult, type InterviewPrepResult } from './api'
 
 type SkillProficiency = 'Beginner' | 'Intermediate' | 'Advanced'
 type Career = 'Data Analyst' | 'Frontend Developer' | 'Backend Developer' | 'ML Engineer' | 'Product Manager' | 'UI/UX Designer'
@@ -134,6 +134,65 @@ function App() {
   useEffect(() => { localStorage.setItem('cpc-theme', theme); document.documentElement.dataset.theme = theme; }, [theme])
   useEffect(() => { if (!pomodoroRunning) return; const timer = window.setInterval(() => setPomodoroSeconds(value => { if (value <= 1) { window.clearInterval(timer); setPomodoroRunning(false); if (pomodoroMode === 'focus') setPomodoroSessions(count => { const next = count + 1; localStorage.setItem('cpc-pomodoro-sessions', String(next)); return next; }); return 0; } return value - 1; }), 1000); return () => window.clearInterval(timer); }, [pomodoroRunning, pomodoroMode])
   useEffect(() => { localStorage.setItem('cpc-profile-bio', profileBio); }, [profileBio])
+
+  useEffect(() => {
+    if (!authOpen) return
+    const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined
+    if (!clientId) {
+      setAuthMessage('Google sign-in is not configured in the frontend. Add VITE_GOOGLE_CLIENT_ID to frontend/.env.local and restart Vite.')
+      return
+    }
+    const mount = document.getElementById('google-signin-button')
+    if (!mount) return
+    let active = true
+    const initialize = () => {
+      const google = (window as Window & { google?: { accounts: { id: { initialize: (config: { client_id: string; callback: (response: { credential: string }) => void }) => void; renderButton: (element: HTMLElement, options: Record<string, unknown>) => void } } }).google
+      if (!google || !active) return
+      google.accounts.id.initialize({
+        client_id: clientId,
+        callback: async (response) => {
+          if (!response.credential || !active) return
+          setAuthLoading(true)
+          setAuthMessage('')
+          try {
+            const user = await authenticateWithGoogle(response.credential)
+            if (!active) return
+            setAccessTokenState(localStorage.getItem('cpc-access-token') || '')
+            setName(user.name)
+            setShowLanding(false)
+            setAuthOpen(false)
+            if (!user.profile || Object.keys(user.profile).length === 0) setTab('Profile setup')
+            else {
+              setProfileForm(current => ({ ...current, ...(user.profile as Partial<UserProfile>) }))
+              setCurrentRole(String(user.profile.current_role || 'Student'))
+              setTab('Overview')
+            }
+          } catch (error) {
+            if (active) setAuthMessage(error instanceof Error ? error.message : 'Google sign-in failed.')
+          } finally {
+            if (active) setAuthLoading(false)
+          }
+        },
+      })
+      google.accounts.id.renderButton(mount, { theme: 'outline', size: 'large', text: authMode === 'login' ? 'continue_with' : 'signup_with', shape: 'rectangular', width: 250 })
+    }
+    const existing = document.querySelector<HTMLScriptElement>('script[data-google-identity]')
+    if (existing) {
+      if ((window as Window & { google?: unknown }).google) initialize()
+      else existing.addEventListener('load', initialize, { once: true })
+    } else {
+      const script = document.createElement('script')
+      script.src = 'https://accounts.google.com/gsi/client'
+      script.async = true
+      script.defer = true
+      script.dataset.googleIdentity = 'true'
+      script.onload = initialize
+      script.onerror = () => setAuthMessage('Could not load Google sign-in. Check your internet connection.')
+      document.head.appendChild(script)
+    }
+    return () => { active = false }
+  }, [authOpen, authMode])
+
 
   const [analytics, setAnalytics] = useState<{ assessment_count: number; latest: number | null; readiness_history: { date: string; score: number; target_role: string }[]; matched_skill_counts: { date: string; count: number }[] } | null>(null)
   const [recommendations, setRecommendations] = useState<{ career_paths: string[]; projects: string[]; courses: { title: string; provider: string; url: string; reason: string }[]; books: { title: string; author: string; reason: string }[]; creators: { name: string; platform: string; focus: string; url: string }[]; trajectory: string[]; quote: { text: string; author: string } } | null>(null)
