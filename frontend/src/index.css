@@ -386,3 +386,45 @@ button{transition:transform .22s ease,box-shadow .22s ease,background-color .22s
 .app-shell:not(.landing-shell) .portfolio-builder,.app-shell:not(.landing-shell) .portfolio-project-card{border-radius:2px}
 @media(max-width:900px){.portfolio-layout{grid-template-columns:1fr}.guided-route{gap:5px}.guided-route>button{padding:4px}.route-connector{font-size:13px}}
 @media(max-width:600px){.guided-route{align-items:stretch;flex-direction:column}.guided-route>button{min-height:42px}.route-connector{transform:rotate(90deg);align-self:center}.portfolio-tips>div{grid-template-columns:1fr}.portfolio-builder{padding:16px!important}}
+
+
+/* Consistent editorial surfaces for legacy workspace cards and forms */
+.career-card,.panel,.history-card,.interview-card,.resource-item{color:#171717}
+.career-card{background:#fbfaf6!important;border:1px solid #c9c3b8!important;border-radius:2px!important;box-shadow:4px 4px 0 rgba(17,17,17,.055);transition:transform .22s,box-shadow .22s}
+.career-card:hover{transform:translateY(-4px);box-shadow:6px 7px 0 rgba(43,112,185,.18)}
+.career-card h3,.career-card h2,.career-card strong,.panel h3,.panel h4,.resource-item strong,.history-card h3,.interview-card h3{color:#171717!important;font-family:'Space Grotesk',sans-serif}
+.career-card p,.panel p,.resource-item small,.history-card p,.interview-card p{color:#625e56}
+.career-card .choice-icon,.career-card .tag{color:#2b70b9}
+.career-card .career-skills span{background:#eaf1f8!important;color:#245f99!important;border-radius:2px}
+.career-card .text-button,.panel .text-button{color:#245f99!important}
+.panel{background:#fbfaf6!important;border:1px solid #c9c3b8!important;border-radius:2px!important;box-shadow:3px 3px 0 rgba(17,17,17,.035)}
+.form-panel label,.form-panel label span{color:#292722}
+.form-panel input,.form-panel select,.form-panel textarea{background:#fffefa;border:1px solid #c9c3b8;border-radius:2px;color:#171717}
+.nav-item.active{background:#e9e5d9!important;color:#171717!important;border-left:4px solid #2b70b9;border-radius:2px}
+.nav-item:hover{background:#eeece5!important;color:#171717!important}
+.sidebar{background:#111!important;color:#f7f5ee!important}
+.sidebar .brand strong,.sidebar .nav-item{color:#f0eee8}
+.sidebar .brand span{color:#a9a397}
+.sidebar .help-card{background:#1c1c1c;border:1px solid #3b3b3b;border-radius:2px}
+.sidebar .help-card strong{color:#f7f5ee}
+.sidebar .help-card p{color:#c2bdb2}
+.profile-mini-button{width:100%;border:0;background:transparent;text-align:left;color:inherit;cursor:pointer}
+.profile-mini-button:hover{background:#262626}
+.landing-return-button{display:flex;align-items:center;gap:7px;padding:9px 12px;border:1px solid #c9c3b8;background:#fbfaf6;color:#171717;font:700 10px 'Space Grotesk',sans-serif}
+.landing-return-button:hover{background:#eaf1f8;border-color:#2b70b9}
+.profile-links-heading{display:flex;align-items:center;gap:13px;margin:28px 0 15px;padding-top:22px;border-top:1px solid #d8d2c7}
+.profile-links-heading>span{width:32px;height:32px;display:grid;place-items:center;background:#111;color:#fff;font:700 11px 'Space Grotesk',sans-serif}
+.profile-links-heading h3{margin:0;color:#171717;font:700 16px 'Space Grotesk',sans-serif}
+.profile-links-heading p{margin:4px 0 0;color:#6d675e;font:400 10px 'DM Sans',sans-serif}
+.profile-links-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.profile-link-field{display:grid;gap:7px;padding:12px;border:1px solid #d1cabe;background:#f4f1e9}
+.profile-link-label{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.profile-link-label b{font:700 10px 'Space Grotesk',sans-serif;color:#171717}
+.profile-link-label small{font:400 8px 'DM Sans',sans-serif;color:#777064}
+.profile-link-field input{width:100%;min-width:0;padding:10px;border:1px solid #c9c3b8;background:#fffefa;color:#171717;font:400 10px 'DM Sans',sans-serif}
+.profile-link-preview{margin-top:20px;padding:17px;border:1px dashed #aaa397;background:#f4f1e9}
+.profile-link-preview>div{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px}
+.profile-link-preview a{padding:8px 11px;background:#111;color:#f7f5ee;text-decoration:none;font:700 9px 'Space Grotesk',sans-serif;transition:background .2s}
+.profile-link-preview a:hover{background:#2b70b9}
+.profile-link-preview p{color:#716b61;font:400 10px 'DM Sans',sans-serif}
+@media(max-width:700px){.profile-links-grid{grid-template-columns:1fr}.landing-return-button span{display:none}}
