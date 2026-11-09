@@ -15,6 +15,7 @@ class ProfileUpdate(BaseModel):
     learning_style: str = Field(default="Project-based", max_length=60)
     hours_per_week: int = Field(default=5, ge=1, le=80)
     skills: list[str] = Field(default_factory=list, max_length=100)
+    social_links: dict[str, str] = Field(default_factory=dict)
 @router.get("")
 def get_profile(user: User = Depends(current_user)):
     return {"name":user.name,"email":user.email,"profile":user.profile or {}}
