@@ -20,7 +20,7 @@ with engine.begin() as connection:
     if "user_id" not in columns:
         connection.execute(text("ALTER TABLE assessments ADD COLUMN user_id INTEGER REFERENCES users(id)"))
 app = FastAPI(title="CareerPivotCoach API",description="Personalised career transition planning and assessment API",version="1.3.0")
-app.add_middleware(CORSMiddleware,allow_origins=["http://localhost:5173","http://127.0.0.1:5173"],allow_credentials=True,allow_methods=["GET","POST","PUT","OPTIONS"],allow_headers=["Content-Type","Authorization"])
+app.add_middleware(CORSMiddleware,allow_origins=["http://localhost:5173","http://127.0.0.1:5173","http://localhost:5174","http://127.0.0.1:5174"],allow_credentials=True,allow_methods=["GET","POST","PUT","OPTIONS"],allow_headers=["Content-Type","Authorization"])
 for router in (auth_router,profile_router,analytics_router,learning_router,assessments_router,careers_router,coach_router,tools_router,interview_router): app.include_router(router)
 @app.get("/")
 def root(): return {"message":"Welcome to CareerPivotCoach API","status":"running"}
