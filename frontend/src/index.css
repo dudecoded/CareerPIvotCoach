@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500;6..96,600&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
 
 :root{font-family:'DM Sans',sans-serif;color:#24233a;background:#f8f8fc;font-synthesis:none;text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;font-optical-sizing:auto;font-weight:400;font-size:14px}
@@ -151,7 +152,6 @@ html[data-theme='dark'] .stat-card,html[data-theme='dark'] .panel,html[data-them
 
 
 /* Editorial / Obys-inspired public landing direction */
-@import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500;6..96,600&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 .landing-shell{background:#f7f5ee;color:#111!important}
 .public-landing{position:relative;isolation:isolate;background-color:#f7f5ee;background-image:linear-gradient(rgba(25,25,25,.065) 1px,transparent 1px),linear-gradient(90deg,rgba(25,25,25,.065) 1px,transparent 1px);background-size:28px 28px;color:#111}
 .public-landing:before,.public-landing:after{content:"";position:absolute;z-index:-1;pointer-events:none;width:250px;height:520px;border:1.5px solid #171717;border-radius:48% 52% 42% 58%;opacity:.65}
