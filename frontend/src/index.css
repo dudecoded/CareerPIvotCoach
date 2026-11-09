@@ -745,3 +745,69 @@ button{transition:transform .22s ease,box-shadow .22s ease,background-color .22s
 @media(max-width:850px){.profile-identity-panel,.pomodoro-panel{grid-template-columns:1fr}.profile-cover-art{min-height:130px}.profile-cover-art>b{width:65px;height:65px;font-size:36px}.pomodoro-side-note{border-left:0;border-top:1px solid rgba(131,167,238,.3);padding:22px 0 0}.pomodoro-orbit{min-height:400px}}
 @media(max-width:560px){.pomodoro-mode-tabs button{padding:8px 9px;font-size:9px}.pomodoro-orbit{min-height:360px}.pomodoro-clock{width:min(250px,72vw)}.pomodoro-panel{padding:18px}.profile-identity-fields{padding:16px}}
 @media(prefers-reduced-motion:reduce){.pomodoro-stars{animation:none}}
+
+
+/* Accessibility contrast fixes for both workspace themes */
+.app-shell[data-theme="dark"]:not(.landing-shell) .main-area,
+.app-shell[data-theme="dark"]:not(.landing-shell) .content{background:transparent;color:#eaf1ff}
+.app-shell[data-theme="dark"]:not(.landing-shell) .welcome-row h1,
+.app-shell[data-theme="dark"]:not(.landing-shell) .page-intro h1,
+.app-shell[data-theme="dark"]:not(.landing-shell) .section-heading h2,
+.app-shell[data-theme="dark"]:not(.landing-shell) .guided-route strong,
+.app-shell[data-theme="dark"]:not(.landing-shell) .stat-card .stat-value{color:#f5f8ff!important}
+.app-shell[data-theme="dark"]:not(.landing-shell) .guided-route,
+.app-shell[data-theme="dark"]:not(.landing-shell) .stat-card,
+.app-shell[data-theme="dark"]:not(.landing-shell) .bottom-grid .panel,
+.app-shell[data-theme="dark"]:not(.landing-shell) .dashboard-detail-grid .panel{background:#111b30;border-color:#344467;color:#eaf1ff}
+.app-shell[data-theme="dark"]:not(.landing-shell) .guided-route small,
+.app-shell[data-theme="dark"]:not(.landing-shell) .stat-card p,
+.app-shell[data-theme="dark"]:not(.landing-shell) .section-heading p,
+.app-shell[data-theme="dark"]:not(.landing-shell) .welcome-row .subheading,
+.app-shell[data-theme="dark"]:not(.landing-shell) .page-intro>p{color:#b9c8e7!important}
+.app-shell[data-theme="dark"]:not(.landing-shell) .guided-route button{color:#eaf1ff}
+.app-shell[data-theme="dark"]:not(.landing-shell) .eyebrow{color:#86c9ff!important}
+.app-shell[data-theme="dark"]:not(.landing-shell) .welcome-row h1 em,
+.app-shell[data-theme="dark"]:not(.landing-shell) .page-intro h1 em{color:#70e8f9!important;-webkit-text-fill-color:#70e8f9}
+.app-shell[data-theme="dark"] .pomodoro-panel,
+.app-shell[data-theme="light"] .pomodoro-panel{background:#101a2d!important;color:#f3f7ff!important}
+.pomodoro-panel .pomodoro-time,
+.pomodoro-panel .pomodoro-time small,
+.pomodoro-panel .pomodoro-side-note h3,
+.pomodoro-panel .pomodoro-side-note h3 em,
+.pomodoro-panel .pomodoro-session-count b{color:#f5f8ff!important;-webkit-text-fill-color:currentColor}
+.pomodoro-panel .pomodoro-time small,
+.pomodoro-panel .pomodoro-side-note h3 em{color:#78e8fa!important}
+.pomodoro-panel .pomodoro-side-note p,
+.pomodoro-panel .pomodoro-tip span,
+.pomodoro-panel .pomodoro-session-count small,
+.pomodoro-panel .pomodoro-reset{color:#c3d2ed!important}
+.pomodoro-panel .pomodoro-tip{background:#1d304f!important;border-color:#45628e!important}
+.pomodoro-panel .pomodoro-mode-tabs{background:#1d2b46!important}
+.pomodoro-panel .pomodoro-mode-tabs button{color:#c1d1ec!important}
+.pomodoro-panel .pomodoro-mode-tabs button.active{background:#284a78!important;color:#c9faff!important}
+.pomodoro-panel .pomodoro-clock{background:radial-gradient(circle,rgba(36,81,130,.3),transparent 68%)}
+.pomodoro-panel .pomodoro-time{color:#fff!important;text-shadow:0 0 18px rgba(73,202,255,.35)}
+/* Account notifications */
+.top-actions{position:relative}
+.notification-trigger{position:relative}
+.notification-popover{position:absolute;right:36px;top:calc(100% + 13px);width:min(380px,calc(100vw - 32px));z-index:110;background:#fcfaf5;color:#151515;border:1px solid #bdb9af;box-shadow:8px 9px 0 rgba(24,56,90,.16),0 18px 45px rgba(0,0,0,.2);padding:17px}
+.notification-popover-heading{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.notification-popover-heading strong{font:800 11px 'Space Grotesk',sans-serif;letter-spacing:1.2px;color:#161616}
+.notification-popover-heading button{border:0;background:none;color:#2469a9;font-size:11px;cursor:pointer}
+.notification-popover>p{font-size:11px;line-height:1.6;color:#555b66;margin:12px 0}
+.notification-row{width:100%;display:flex;gap:11px;align-items:center;text-align:left;padding:13px 6px;border:0;border-top:1px solid #ddd9cf;background:transparent;color:#151515;cursor:pointer}
+.notification-row:hover{background:#eaf2f9}
+.notification-row>span:nth-child(2){flex:1;display:grid;gap:5px}
+.notification-row b{font-size:12px;color:#151515}
+.notification-row small{font-size:10px;color:#5c626b;line-height:1.5}
+.notification-dot{color:#2b70b9;font-size:18px}
+.app-shell[data-theme="dark"] .notification-popover{background:#101a30;border-color:#40517b;color:#edf3ff;box-shadow:0 16px 50px rgba(0,0,0,.5)}
+.app-shell[data-theme="dark"] .notification-popover-heading strong,
+.app-shell[data-theme="dark"] .notification-row b,
+.app-shell[data-theme="dark"] .notification-row{color:#f1f5ff}
+.app-shell[data-theme="dark"] .notification-popover>p,
+.app-shell[data-theme="dark"] .notification-row small{color:#b8c8e7}
+.app-shell[data-theme="dark"] .notification-row{border-color:#334464}
+.app-shell[data-theme="dark"] .notification-row:hover{background:#1b2b4b}
+.app-shell[data-theme="dark"] .notification-popover-heading button{color:#81d9ff}
+@media(max-width:650px){.notification-popover{right:0;top:calc(100% + 8px)}}
