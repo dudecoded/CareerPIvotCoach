@@ -214,3 +214,102 @@ html[data-theme='dark'] .stat-card,html[data-theme='dark'] .panel,html[data-them
 .landing-footer button{font-family:'Space Grotesk',sans-serif;color:#1d65a5}
 @media(max-width:800px){.editorial-hero{grid-template-columns:1fr;padding:30px 25px 35px}.editorial-topline{font-size:8px}.editorial-art{height:390px}.poster-black{height:310px}.poster-number{bottom:-42px}.sticker-a{left:-8px}.sticker-b{right:-8px}}
 @media(max-width:520px){.editorial-hero{padding:25px 20px}.landing-hero-copy h1{font-size:clamp(54px,16vw,78px)}.editorial-art{height:300px;margin:10px 0 20px}.poster-black{height:235px}.poster-label{font-size:7px}.poster-sticker{font-size:7px;padding:8px}.poster-number{font-size:42px;bottom:-35px}.art-caption{font-size:6px}.editorial-topline{letter-spacing:.8px}}
+
+
+/* Motion system + cohesive editorial skin across the complete product */
+:root{--editorial-paper:#f7f5ee;--editorial-ink:#111;--editorial-blue:#2b70b9;--editorial-line:rgba(17,17,17,.17);--editorial-muted:#65615a}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif}
+button,a,input,select,textarea{ -webkit-tap-highlight-color:transparent }
+button{transition:transform .22s ease,box-shadow .22s ease,background-color .22s ease,border-color .22s ease,color .22s ease}
+.hero-line{display:block;overflow:hidden;padding:0 .06em .08em 0}
+.hero-line-one,.hero-line-two,.hero-line-three{opacity:0;transform:translateY(115%);animation:hero-type-in .9s cubic-bezier(.16,1,.3,1) forwards}
+.hero-line-one{animation-delay:.12s}.hero-line-two{animation-delay:.3s}.hero-line-three{animation-delay:.5s}
+@keyframes hero-type-in{to{opacity:1;transform:translateY(0)}}
+.editorial-art{animation:poster-enter 1.05s cubic-bezier(.16,1,.3,1) .28s both}
+.poster-black{animation:poster-pop .9s cubic-bezier(.16,1,.3,1) .42s both}
+.poster-sticker{animation:sticker-in .7s cubic-bezier(.16,1,.3,1) 1.1s both}
+.sticker-b{animation-delay:1.28s}
+.career-scribble{transform-origin:center;animation:scribble-arrive 1.2s cubic-bezier(.16,1,.3,1) .55s both,scribble-breathe 7s ease-in-out 1.9s infinite}
+.poster-number{animation:number-in .7s ease 1.2s both}
+@keyframes poster-enter{from{opacity:0;transform:translateX(35px) scale(.97)}to{opacity:1;transform:translateX(0) scale(1)}}
+@keyframes poster-pop{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes sticker-in{from{opacity:0;translate:0 18px;rotate:0deg}to{opacity:1;translate:0 0}}
+@keyframes scribble-arrive{from{opacity:0;scale:.82;rotate:-7deg}to{opacity:1;scale:1.04;rotate:-3deg}}
+@keyframes scribble-breathe{0%,100%{transform:rotate(-3deg) scale(1.04)}50%{transform:rotate(-1.5deg) scale(1.065)}}
+@keyframes number-in{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.landing-kicker{animation:fade-up .65s ease .05s both}
+.landing-hero-copy>p{animation:fade-up .7s ease .62s both}
+.landing-hero-actions{animation:fade-up .7s ease .78s both}
+.landing-proof{animation:fade-up .7s ease .95s both}
+@keyframes fade-up{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.landing-stats,.landing-section,.landing-careers,.landing-quote,.landing-bottom{animation:section-arrive .8s ease both}
+@keyframes section-arrive{from{opacity:0;translate:0 22px}to{opacity:1;translate:0 0}}
+.landing-feature,.landing-career-card{transition:transform .3s cubic-bezier(.2,.8,.2,1),box-shadow .3s ease}
+.landing-feature:hover,.landing-career-card:hover{transform:translate(-4px,-4px) rotate(-.35deg)}
+.landing-feature:nth-child(2){transition-delay:.04s}.landing-feature:nth-child(3){transition-delay:.08s}
+.landing-brand .brand-mark{transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.landing-brand:hover .brand-mark{transform:rotate(-9deg) scale(1.08)}
+.landing-quote blockquote{animation:quote-reveal 1s cubic-bezier(.16,1,.3,1) both}
+@keyframes quote-reveal{from{opacity:0;letter-spacing:.08em;transform:translateY(15px)}to{opacity:1;letter-spacing:0;transform:translateY(0)}}
+
+/* Workspace adopts the same paper / ink / blue design language */
+.app-shell:not(.landing-shell){background:var(--editorial-paper);color:var(--editorial-ink);font-family:'DM Sans',sans-serif}
+.app-shell:not(.landing-shell) .sidebar{background:#111;border-right:1px solid #252525;color:#f7f5ee}
+.app-shell:not(.landing-shell) .brand strong{font-family:'Space Grotesk',sans-serif;color:#fff}
+.app-shell:not(.landing-shell) .brand span,.app-shell:not(.landing-shell) .workspace-label{color:#aaa59a}
+.app-shell:not(.landing-shell) .brand-mark{border-radius:2px;background:#2b70b9;color:#fff}
+.app-shell:not(.landing-shell) .nav-item{border-radius:2px;color:#c7c2b8;transition:background .2s,color .2s,transform .2s}
+.app-shell:not(.landing-shell) .nav-item:hover{background:#242424;color:#fff;transform:translateX(3px)}
+.app-shell:not(.landing-shell) .nav-item.active{background:#e9e5da;color:#111;border-left:3px solid #2b70b9}
+.app-shell:not(.landing-shell) .help-card{background:#1d1d1d;border:1px solid #383838;border-radius:2px}
+.app-shell:not(.landing-shell) .help-card strong,.app-shell:not(.landing-shell) .profile-mini strong{color:#f7f5ee}
+.app-shell:not(.landing-shell) .help-card p,.app-shell:not(.landing-shell) .profile-mini span{color:#aaa59a}
+.app-shell:not(.landing-shell) .main-area{background:var(--editorial-paper)}
+.app-shell:not(.landing-shell) .topbar{background:rgba(247,245,238,.94);border-bottom:1px solid var(--editorial-line);backdrop-filter:blur(14px)}
+.app-shell:not(.landing-shell) .breadcrumb,.app-shell:not(.landing-shell) .breadcrumb strong{font-family:'Space Grotesk',sans-serif;color:#292929}
+.app-shell:not(.landing-shell) .global-search{border:1px solid #bcb7ac;border-radius:2px;background:transparent}
+.app-shell:not(.landing-shell) .global-search input{font-family:'DM Sans',sans-serif}
+.app-shell:not(.landing-shell) .demo-pill{border-radius:2px;background:#e6eee6;color:#245c43}
+.app-shell:not(.landing-shell) .theme-toggle,.app-shell:not(.landing-shell) .account-button,.app-shell:not(.landing-shell) .icon-button{border-radius:2px;border:1px solid #bcb7ac;background:transparent;color:#222}
+.app-shell:not(.landing-shell) .content{animation:workspace-in .65s cubic-bezier(.16,1,.3,1) both}
+@keyframes workspace-in{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.app-shell:not(.landing-shell) .eyebrow,.app-shell:not(.landing-shell) .muted-label{font-family:'Space Grotesk',sans-serif;letter-spacing:1.4px;color:#2b70b9}
+.app-shell:not(.landing-shell) h1,.app-shell:not(.landing-shell) h2,.app-shell:not(.landing-shell) h3,.app-shell:not(.landing-shell) h4{font-family:'Space Grotesk',sans-serif;letter-spacing:-.045em;color:#111}
+.app-shell:not(.landing-shell) .welcome-row h1,.app-shell:not(.landing-shell) .page-intro h1{font-size:clamp(34px,4vw,54px);line-height:1.02}
+.app-shell:not(.landing-shell) .welcome-row h1 em,.app-shell:not(.landing-shell) .page-intro h1 em{font:500 1em 'Bodoni Moda',serif;color:#2b70b9}
+.app-shell:not(.landing-shell) .subheading,.app-shell:not(.landing-shell) .page-intro>p{font:400 13px/1.8 'DM Sans',sans-serif;color:#625e56}
+.app-shell:not(.landing-shell) .primary-button{background:#111;color:#fff;border:1px solid #111;border-radius:2px;box-shadow:4px 4px 0 #2b70b9;font:700 11px 'Space Grotesk',sans-serif}
+.app-shell:not(.landing-shell) .primary-button:hover{transform:translate(-2px,-2px);box-shadow:7px 7px 0 #2b70b9}
+.app-shell:not(.landing-shell) .light-button,.app-shell:not(.landing-shell) .text-button,.app-shell:not(.landing-shell) .tiny-button{border-radius:2px;font-family:'Space Grotesk',sans-serif}
+.app-shell:not(.landing-shell) .hero-card{border:1px solid #111;border-radius:0;background:#111;box-shadow:7px 7px 0 #2b70b9;color:#f7f5ee}
+.app-shell:not(.landing-shell) .hero-copy h2,.app-shell:not(.landing-shell) .hero-copy p{color:#f7f5ee}
+.app-shell:not(.landing-shell) .hero-copy .tag{background:#2b70b9;color:#fff;border-radius:0}
+.app-shell:not(.landing-shell) .hero-art{filter:saturate(.85)}
+.app-shell:not(.landing-shell) .art-core{border-radius:2px;background:#2b70b9;box-shadow:7px 7px 0 #f7f5ee}
+.app-shell:not(.landing-shell) .float-card{border:1px solid #111;border-radius:2px;box-shadow:4px 4px 0 #2b70b9}
+.app-shell:not(.landing-shell) .stat-card,.app-shell:not(.landing-shell) .panel,.app-shell:not(.landing-shell) .form-panel,.app-shell:not(.landing-shell) .career-choice,.app-shell:not(.landing-shell) .career-card,.app-shell:not(.landing-shell) .history-card,.app-shell:not(.landing-shell) .interview-card,.app-shell:not(.landing-shell) .resource-item{border:1px solid #c8c2b6;border-radius:2px;background:#fbfaf6;box-shadow:3px 3px 0 rgba(17,17,17,.055)}
+.app-shell:not(.landing-shell) .stat-card,.app-shell:not(.landing-shell) .panel{transition:transform .25s ease,box-shadow .25s ease}
+.app-shell:not(.landing-shell) .stat-card:hover,.app-shell:not(.landing-shell) .panel:hover{transform:translateY(-3px);box-shadow:5px 6px 0 rgba(43,112,185,.22)}
+.app-shell:not(.landing-shell) .stat-symbol{border-radius:2px}
+.app-shell:not(.landing-shell) .progress-track{border-radius:0;background:#e7e2d8}
+.app-shell:not(.landing-shell) .progress-track>div{border-radius:0;background:#2b70b9}
+.app-shell:not(.landing-shell) .career-choice.chosen,.app-shell:not(.landing-shell) .skill-chip.selected{border-color:#2b70b9;background:#eaf1f8;color:#174c7e}
+.app-shell:not(.landing-shell) input,.app-shell:not(.landing-shell) select,.app-shell:not(.landing-shell) textarea{border-radius:2px;border-color:#bcb7ac;background:#fffefa;color:#171717;font-family:'DM Sans',sans-serif}
+.app-shell:not(.landing-shell) input:focus,.app-shell:not(.landing-shell) select:focus,.app-shell:not(.landing-shell) textarea:focus{outline:2px solid #2b70b9;outline-offset:1px}
+.app-shell:not(.landing-shell) .chat-message,.app-shell:not(.landing-shell) .notice{border-radius:2px}
+.app-shell:not(.landing-shell) .chat-message.coach{background:#e9e5da;color:#222}
+.app-shell:not(.landing-shell) .chat-message:not(.coach){background:#111;color:#fff}
+.app-shell:not(.landing-shell) .quote-panel,.app-shell:not(.landing-shell) .inspiration-quote{border-radius:2px;background:#111;color:#f7f5ee}
+.app-shell:not(.landing-shell) .quote-panel p,.app-shell:not(.landing-shell) .inspiration-quote blockquote{font-family:'Bodoni Moda',serif;color:#f7f5ee}
+.app-shell:not(.landing-shell) .quote-panel span,.app-shell:not(.landing-shell) .inspiration-quote p{color:#aaa59a}
+.app-shell:not(.landing-shell) .auth-overlay{backdrop-filter:blur(12px);background:rgba(10,10,10,.68)}
+.app-shell:not(.landing-shell) .auth-visual{background:#111;border-radius:0}
+.app-shell:not(.landing-shell) .auth-visual-copy h2{font-family:'Space Grotesk',sans-serif}
+.app-shell:not(.landing-shell) .auth-visual-copy h2 em{font-family:'Bodoni Moda',serif;color:#79b8ed}
+.app-shell:not(.landing-shell) .auth-form-side{background:var(--editorial-paper);border-radius:0}
+.app-shell:not(.landing-shell) .auth-form-wrap h2{font-family:'Space Grotesk',sans-serif}
+.app-shell:not(.landing-shell) .auth-provider-grid button,.app-shell:not(.landing-shell) .auth-submit{border-radius:2px}
+.app-shell:not(.landing-shell) .footer{border-color:#c8c2b6;color:#68635b}
+@media(max-width:700px){.app-shell:not(.landing-shell) .topbar{backdrop-filter:blur(10px)}.app-shell:not(.landing-shell) .content{padding-bottom:35px}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
