@@ -313,3 +313,76 @@ button{transition:transform .22s ease,box-shadow .22s ease,background-color .22s
 .app-shell:not(.landing-shell) .footer{border-color:#c8c2b6;color:#68635b}
 @media(max-width:700px){.app-shell:not(.landing-shell) .topbar{backdrop-filter:blur(10px)}.app-shell:not(.landing-shell) .content{padding-bottom:35px}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}}
+
+
+/* CareerPivot identity polish: tactile paper, route cues and portfolio studio */
+.app-shell:not(.landing-shell) .main-area,.app-shell:not(.landing-shell) .content{background-color:#f7f5ee;background-image:linear-gradient(rgba(35,35,35,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(35,35,35,.035) 1px,transparent 1px),radial-gradient(ellipse at 80% 15%,rgba(43,112,185,.055),transparent 45%);background-size:32px 32px,32px 32px,auto}
+.app-shell:not(.landing-shell) .content{position:relative}
+.career-mark{display:grid;place-items:center;color:currentColor}
+.career-mark svg{width:78%;height:78%;overflow:visible}
+.landing-brand .career-mark{background:#111!important;color:#f7f5ee!important}
+.app-shell:not(.landing-shell) .brand-mark.career-mark{background:#2b70b9;color:#fff}
+.auth-brand .career-mark,.auth-mobile-brand .career-mark{background:#2b70b9;color:#fff}
+.discovery-results{width:min(430px,calc(100vw - 30px));max-height:min(72vh,590px);overflow:auto;padding:9px;background:#fbfaf6;border:1px solid #171717;border-radius:2px;box-shadow:7px 7px 0 rgba(43,112,185,.24)}
+.search-results-heading{padding:10px 11px 6px;font:700 8px 'Space Grotesk',sans-serif;letter-spacing:1.5px;color:#2b70b9}
+.discovery-results>button{border-radius:2px;padding:10px 11px}
+.discovery-results>button:hover{background:#eaf1f8;transform:translateX(3px)}
+.discovery-results>button strong{font:700 11px 'Space Grotesk',sans-serif}
+.discovery-results>button small{font:400 9px 'DM Sans',sans-serif;color:#716c63}
+.search-discover-all{width:100%;display:flex;justify-content:space-between;align-items:center;border-top:1px solid #d9d3c8!important;margin-top:5px;padding-top:13px!important;color:#245f99!important;font:700 10px 'Space Grotesk',sans-serif!important}
+.global-search:focus-within{border-color:#2b70b9!important;box-shadow:0 0 0 3px rgba(43,112,185,.1)}
+.guided-route{display:flex;align-items:center;gap:12px;margin:4px 0 24px;padding:12px 14px;border:1px solid #c8c2b6;background:rgba(251,250,246,.82);box-shadow:3px 3px 0 rgba(17,17,17,.05)}
+.guided-route>button{position:relative;flex:1;display:grid;grid-template-columns:28px 1fr;column-gap:9px;text-align:left;align-items:center;background:transparent;border:0;padding:4px 8px;cursor:pointer}
+.guided-route>button>span{grid-row:span 2;width:27px;height:27px;display:grid;place-items:center;background:#111;color:#fff;font:700 9px 'Space Grotesk',sans-serif}
+.guided-route>button strong{font:700 10px 'Space Grotesk',sans-serif;color:#111}
+.guided-route>button small{font:400 9px 'DM Sans',sans-serif;color:#716c63}
+.guided-route>button .route-arrow{position:absolute;right:2px;top:0;color:#2b70b9;font-size:14px;animation:route-nudge 1.8s ease-in-out infinite}
+.guided-route>button:hover{transform:translateY(-2px)}
+.route-connector{font-style:normal;color:#2b70b9;font-size:18px;animation:route-flow 1.7s ease-in-out infinite}
+@keyframes route-nudge{0%,100%{transform:translate(0,0)}50%{transform:translate(4px,-3px)}}
+@keyframes route-flow{0%,100%{opacity:.4;transform:translateX(-2px)}50%{opacity:1;transform:translateX(3px)}}
+.career-route-hint{display:inline-flex;align-items:center;gap:9px;margin-top:13px;padding:8px 12px;border:1px dashed #2b70b9;background:#edf3f8;color:#245f99;font:700 9px 'Space Grotesk',sans-serif}
+.career-route-hint i{width:7px;height:7px;border-radius:50%;background:#2b70b9;box-shadow:0 0 0 4px rgba(43,112,185,.13);animation:hint-pulse 1.8s infinite}
+@keyframes hint-pulse{50%{box-shadow:0 0 0 8px rgba(43,112,185,0)}}
+.portfolio-layout{display:grid;grid-template-columns:minmax(280px,.78fr) minmax(0,1.22fr);gap:20px;align-items:start}
+.portfolio-builder{padding:24px!important}
+.portfolio-builder form{display:grid;gap:15px}
+.portfolio-builder label{display:grid;gap:7px;font:700 10px 'Space Grotesk',sans-serif;color:#35322d}
+.portfolio-builder input,.portfolio-builder textarea,.portfolio-builder select{width:100%;padding:11px 12px;border:1px solid #c8c2b6;background:#fffefa;font:400 11px 'DM Sans',sans-serif}
+.portfolio-builder textarea{resize:vertical;min-height:110px}
+.portfolio-builder .primary-button{justify-self:start}
+.portfolio-compass{width:38px;height:38px;display:grid;place-items:center;background:#111;color:#f7f5ee;font-size:23px}
+.portfolio-preview{min-width:0}
+.portfolio-preview-head{display:flex;align-items:center;justify-content:space-between;padding:5px 3px 15px;border-bottom:1px solid #c8c2b6}
+.portfolio-preview-head h3{margin:5px 0;font:700 19px 'Space Grotesk',sans-serif}
+.portfolio-count{font:700 34px 'Space Grotesk',sans-serif;color:#2b70b9}
+.portfolio-empty{min-height:330px;margin-top:14px;border:1px dashed #aaa397;background:rgba(251,250,246,.65);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:25px}
+.empty-art{width:64px;height:64px;display:grid;place-items:center;background:#111;color:#79b8ed;font-size:34px;transform:rotate(-8deg);box-shadow:6px 6px 0 #2b70b9}
+.portfolio-empty h3{margin:23px 0 6px;font:700 19px 'Space Grotesk',sans-serif}
+.portfolio-empty p{max-width:320px;color:#6b665d;font:400 11px/1.7 'DM Sans',sans-serif}
+.animated-next-arrow{margin-top:12px;color:#2b70b9;font:700 10px 'Space Grotesk',sans-serif;animation:route-nudge 1.8s infinite}
+.portfolio-project-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px;padding-top:15px}
+.portfolio-project-card{border:1px solid #bdb7ab;background:#fbfaf6;box-shadow:4px 4px 0 rgba(17,17,17,.07);transition:transform .25s,box-shadow .25s}
+.portfolio-project-card:hover{transform:translateY(-4px) rotate(-.3deg);box-shadow:6px 7px 0 rgba(43,112,185,.22)}
+.portfolio-project-art{height:120px;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#111;color:#f7f5ee}
+.portfolio-project-art:before,.portfolio-project-art:after{content:"";position:absolute;width:190px;height:190px;border:1px solid rgba(121,184,237,.5);border-radius:50%;animation:portfolio-orbit 14s linear infinite}
+.portfolio-project-art:after{width:130px;height:130px;animation-direction:reverse}
+@keyframes portfolio-orbit{to{transform:rotate(360deg)}}
+.portfolio-project-art>span{font:700 43px 'Space Grotesk',sans-serif;color:#79b8ed}
+.portfolio-project-art>b{position:absolute;top:10px;left:10px;padding:5px 7px;background:#f7f5ee;color:#111;font:700 8px 'Space Grotesk',sans-serif}
+.portfolio-project-art>i{position:absolute;right:15px;bottom:8px;color:#79b8ed;font-style:normal;font-size:24px}
+.portfolio-project-body{padding:14px}
+.portfolio-project-body>small{color:#777064;font:700 8px 'Space Grotesk',sans-serif}
+.portfolio-project-body h4{margin:6px 0;font:700 15px 'Space Grotesk',sans-serif}
+.portfolio-project-body p{min-height:38px;color:#655f56;font:400 10px/1.7 'DM Sans',sans-serif}
+.portfolio-project-actions{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid #e1ddd4}
+.portfolio-project-actions a,.portfolio-project-actions button{border:0;background:none;color:#245f99;font:700 9px 'Space Grotesk',sans-serif;text-decoration:none;cursor:pointer}
+.portfolio-project-actions button{color:#8b5149}
+.portfolio-tips{margin-top:23px;padding:20px;border:1px solid #c8c2b6;background:#eeebe2}
+.portfolio-tips>div{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:13px}
+.portfolio-tips article{border-left:2px solid #2b70b9;padding-left:12px}
+.portfolio-tips b{font:700 9px 'Space Grotesk',sans-serif;color:#245f99}
+.portfolio-tips p{font:400 10px/1.6 'DM Sans',sans-serif;color:#625d55}
+.app-shell:not(.landing-shell) .portfolio-builder,.app-shell:not(.landing-shell) .portfolio-project-card{border-radius:2px}
+@media(max-width:900px){.portfolio-layout{grid-template-columns:1fr}.guided-route{gap:5px}.guided-route>button{padding:4px}.route-connector{font-size:13px}}
+@media(max-width:600px){.guided-route{align-items:stretch;flex-direction:column}.guided-route>button{min-height:42px}.route-connector{transform:rotate(90deg);align-self:center}.portfolio-tips>div{grid-template-columns:1fr}.portfolio-builder{padding:16px!important}}
