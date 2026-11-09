@@ -146,7 +146,7 @@ function App() {
     if (!mount) return
     let active = true
     const initialize = () => {
-      const google = (window as Window & { google?: { accounts: { id: { initialize: (config: { client_id: string; callback: (response: { credential: string }) => void }) => void; renderButton: (element: HTMLElement, options: Record<string, unknown>) => void } } }).google
+      const google = (window as any).google
       if (!google || !active) return
       google.accounts.id.initialize({
         client_id: clientId,
