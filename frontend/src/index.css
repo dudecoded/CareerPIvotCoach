@@ -428,3 +428,37 @@ button{transition:transform .22s ease,box-shadow .22s ease,background-color .22s
 .profile-link-preview a:hover{background:#2b70b9}
 .profile-link-preview p{color:#716b61;font:400 10px 'DM Sans',sans-serif}
 @media(max-width:700px){.profile-links-grid{grid-template-columns:1fr}.landing-return-button span{display:none}}
+
+
+/* Career compass hero artwork */
+.compass-poster{overflow:hidden;background-color:#101214;background-image:radial-gradient(circle at 50% 48%,rgba(43,112,185,.2),transparent 48%),linear-gradient(135deg,#111 0%,#171b20 100%)}
+.compass-poster:after{content:"";position:absolute;inset:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:25px 25px;mask-image:radial-gradient(ellipse at center,#000 20%,transparent 85%)}
+.career-compass-art{position:absolute;width:min(78%,520px);height:100%;left:11%;top:0;overflow:visible;filter:drop-shadow(0 12px 18px rgba(0,0,0,.3));animation:compass-hover 5s ease-in-out infinite;z-index:1}
+.compass-rays{stroke:rgba(247,245,238,.17);stroke-width:1.2;stroke-dasharray:4 8}
+.compass-ring{fill:none;stroke:#79b8ed;stroke-width:1.5;opacity:.55;stroke-dasharray:3 7;transform-origin:260px 195px;animation:compass-spin 38s linear infinite}
+.compass-ring circle+circle{stroke:#f7f5ee;stroke-dasharray:1 5;opacity:.7}
+.compass-needle{transform-origin:260px 195px;animation:needle-drift 8s ease-in-out infinite}
+.compass-card-dots{fill:#f7f5ee;filter:drop-shadow(0 0 5px #4b94d6)}
+.compass-orbit{position:absolute;left:50%;top:50%;width:330px;height:330px;border:1px solid rgba(121,184,237,.25);border-radius:50%;transform:translate(-50%,-50%);z-index:0}
+.orbit-two{width:410px;height:250px;transform:translate(-50%,-50%) rotate(-28deg);border-style:dashed;animation:compass-spin 48s linear infinite}
+.career-float-card{position:absolute;z-index:3;min-width:148px;padding:11px 13px;background:#f7f5ee;color:#111;border:1px solid #111;box-shadow:4px 4px 0 #2b70b9;display:grid;gap:3px;animation:float-card 4.8s ease-in-out infinite}
+.career-float-card span{font:700 7px 'Space Grotesk',sans-serif;letter-spacing:1.2px;color:#2b70b9}
+.career-float-card b{font:700 13px 'Space Grotesk',sans-serif}
+.career-float-card small{font:400 8px 'DM Sans',sans-serif;color:#625e56}
+.career-float-card i{position:absolute;right:10px;top:13px;font-style:normal;color:#2b70b9;font-size:15px}
+.career-float-frontend{left:4%;top:26%;transform:rotate(-4deg);animation-delay:-.7s}
+.career-float-ml{right:3%;top:25%;transform:rotate(4deg);animation-delay:-1.8s}
+.career-float-data{left:4%;bottom:19%;transform:rotate(3deg);animation-delay:-2.4s}
+.career-float-cyber{right:3%;bottom:18%;transform:rotate(-3deg);animation-delay:-3.2s}
+.compass-north,.compass-south{position:absolute;z-index:2;color:#f7f5ee;font:700 9px 'Space Grotesk',sans-serif;letter-spacing:2px}
+.compass-north{top:15%;left:50%;transform:translateX(-50%)}
+.compass-south{bottom:13%;left:50%;transform:translateX(-50%)}
+.compass-poster .poster-number{right:14px;bottom:9px;color:#f7f5ee;font-size:clamp(19px,2.2vw,27px);line-height:1.05;letter-spacing:-.04em;text-align:right}
+.compass-poster .poster-label{z-index:4}
+@keyframes compass-spin{to{transform:rotate(360deg)}}
+@keyframes compass-hover{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-9px) rotate(1deg)}}
+@keyframes needle-drift{0%,100%{transform:rotate(-5deg)}50%{transform:rotate(5deg)}}
+@keyframes float-card{0%,100%{translate:0 0}50%{translate:0 -9px}}
+@media(max-width:900px){.career-float-card{min-width:122px;padding:8px}.career-float-card b{font-size:11px}.career-float-card small{font-size:7px}.career-compass-art{left:8%;width:84%}.compass-orbit{width:270px;height:270px}}
+@media(max-width:600px){.editorial-art{height:380px}.poster-black{height:310px}.career-compass-art{width:92%;left:4%}.career-float-card{min-width:105px;padding:7px 8px}.career-float-card b{font-size:10px}.career-float-card small{font-size:6px}.career-float-card span{font-size:6px}.career-float-frontend,.career-float-data{left:1%}.career-float-ml,.career-float-cyber{right:1%}.compass-orbit{width:220px;height:220px}.compass-poster .poster-number{font-size:16px}}
+@media(prefers-reduced-motion:reduce){.career-compass-art,.compass-ring,.compass-needle,.orbit-two,.career-float-card{animation:none!important}}
