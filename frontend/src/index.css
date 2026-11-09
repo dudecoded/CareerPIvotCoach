@@ -625,3 +625,41 @@ button{transition:transform .22s ease,box-shadow .22s ease,background-color .22s
 @keyframes auth-compass-float{0%,100%{transform:translateY(0) rotate(-8deg)}50%{transform:translateY(-8px) rotate(8deg)}}
 @media(max-width:700px){.auth-overlay{width:calc(100% - 24px);max-height:calc(100dvh - 24px);grid-template-columns:1fr;border-radius:0}.auth-visual{display:none}.auth-form-side{padding:30px 22px}.auth-mobile-brand{display:flex;margin-bottom:26px}.auth-form-wrap{max-width:440px}.auth-provider-grid{grid-template-columns:1fr 1fr}}
 @media(prefers-reduced-motion:reduce){.auth-orbit-core{animation:none!important}}
+
+
+/* CareerPivotCoach investigative wordmark — inspired by the user's editorial portfolio reference */
+.career-investigation-board{position:relative;width:100%;max-width:570px;min-height:430px;margin:18px 0 22px;padding:20px 5px 66px;isolation:isolate}
+.investigation-topline{display:flex;justify-content:space-between;gap:10px;border-top:1px solid rgba(23,23,23,.7);border-bottom:1px solid rgba(23,23,23,.35);padding:8px 2px;font:700 7px 'Space Grotesk',sans-serif;letter-spacing:1.35px;color:#625e56}
+.career-wordmark{position:relative;z-index:2;display:flex;flex-direction:column;align-items:flex-start;margin:29px 0 0!important;font:900 clamp(66px,8vw,112px)/.72 'Space Grotesk',sans-serif!important;letter-spacing:-.105em!important;color:#111!important;text-transform:uppercase}
+.career-wordmark>span{position:relative;display:block;white-space:nowrap;opacity:0;animation:wordmark-arrive .9s cubic-bezier(.16,1,.3,1) forwards}
+.career-wordmark .word-career{animation-delay:.12s}
+.career-wordmark .word-pivot{margin-left:9%;font:500 1.08em/.86 'Bodoni Moda',serif!important;letter-spacing:-.095em!important;color:#2b70b9!important;animation-delay:.32s}
+.career-wordmark .word-coach{margin-left:22%;font:800 .77em/.9 'Space Grotesk',sans-serif!important;letter-spacing:-.09em!important;animation-delay:.52s}
+.wordmark-star{position:absolute;right:-34px;top:-5px;color:#2b70b9;font:400 24px 'DM Sans',sans-serif;animation:star-turn 12s linear infinite}
+.investigation-connectors{position:absolute;z-index:1;inset:55px -5px 38px;width:calc(100% + 10px);height:calc(100% - 93px);overflow:visible;pointer-events:none}
+.investigation-connectors path{fill:none;stroke:#2b70b9;stroke-width:1.3;stroke-dasharray:5 6;opacity:.62;stroke-dashoffset:300;animation:connector-draw 2.2s ease forwards}
+.investigation-connectors path:nth-child(2){animation-delay:.4s}.investigation-connectors path:nth-child(3){animation-delay:.7s}
+.investigation-note{position:absolute;z-index:3;display:grid;gap:3px;max-width:165px;padding:9px 11px;background:#fbfaf6;border:1px solid #171717;box-shadow:3px 3px 0 #2b70b9;color:#171717;transform:rotate(-3deg);animation:note-arrive .7s cubic-bezier(.16,1,.3,1) both}
+.investigation-note i{font:700 6px 'Space Grotesk',sans-serif;letter-spacing:1.2px;color:#2b70b9;font-style:normal}
+.investigation-note b{font:700 9px 'Space Grotesk',sans-serif}
+.investigation-note small{font:400 7px/1.4 'DM Sans',sans-serif;color:#68645d}
+.note-strength{left:0;bottom:8px;animation-delay:.75s}
+.note-direction{right:3px;top:55%;transform:rotate(3deg);animation-delay:.95s}
+.note-build{right:18%;bottom:0;transform:rotate(-2deg);animation-delay:1.15s}
+.investigation-stamp{position:absolute;z-index:3;right:4%;top:15%;width:62px;height:62px;border:1px solid #2b70b9;border-radius:50%;display:grid;place-content:center;text-align:center;transform:rotate(11deg);font:700 7px/1.25 'Space Grotesk',sans-serif;letter-spacing:1px;color:#2b70b9;background:rgba(247,245,238,.8);animation:stamp-pop .6s .9s both}
+.investigation-stamp strong{font-size:8px;color:#111}
+.investigation-typed{position:absolute;left:2px;bottom:-23px;display:flex;align-items:center;gap:9px;max-width:100%;font-family:'Space Grotesk',sans-serif}
+.investigation-typed .typed-label{font-size:6px;letter-spacing:1.1px;color:#777064}
+.investigation-typed b{font-size:8px;letter-spacing:1.3px;color:#2b70b9;white-space:nowrap;animation:typed-fade .35s ease both}
+.investigation-typed>i{width:1px;height:11px;background:#2b70b9;animation:caret-blink .8s steps(2,start) infinite}
+@keyframes wordmark-arrive{from{opacity:0;transform:translateY(32px);clip-path:inset(0 0 100% 0)}to{opacity:1;transform:translateY(0);clip-path:inset(0 0 0 0)}}
+@keyframes connector-draw{to{stroke-dashoffset:0}}
+@keyframes note-arrive{from{opacity:0;translate:0 12px;rotate:0deg}to{opacity:1;translate:0 0}}
+@keyframes stamp-pop{from{opacity:0;scale:.5;rotate:-15deg}to{opacity:1;scale:1;rotate:11deg}}
+@keyframes star-turn{to{transform:rotate(360deg)}}
+@keyframes typed-fade{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@keyframes caret-blink{to{opacity:0}}
+@media(max-width:1050px){.career-investigation-board{min-height:390px}.career-wordmark{font-size:clamp(60px,8.5vw,92px)!important}}
+@media(max-width:850px){.career-investigation-board{max-width:650px;min-height:420px;margin:25px auto 35px}.career-wordmark{font-size:clamp(70px,12vw,108px)!important}.landing-hero-copy>p{margin-top:20px}}
+@media(max-width:560px){.career-investigation-board{min-height:350px;padding-top:14px}.career-wordmark{font-size:clamp(58px,15vw,82px)!important;margin-top:32px!important}.investigation-note{max-width:130px;padding:7px 8px}.investigation-note b{font-size:8px}.investigation-note small{font-size:6px}.note-direction{top:57%;right:0}.note-build{right:16%;bottom:0}.investigation-stamp{width:52px;height:52px;right:2%;top:13%;font-size:6px}.investigation-typed{bottom:-18px;gap:6px}.investigation-typed .typed-label{font-size:5px}.investigation-typed b{font-size:6px}.investigation-connectors{inset:65px -5px 35px;height:calc(100% - 100px)}}
+@media(prefers-reduced-motion:reduce){.career-wordmark>span,.investigation-connectors path,.investigation-note,.investigation-stamp,.wordmark-star,.investigation-typed b,.investigation-typed>i{animation:none!important;opacity:1;transform:none;translate:none;clip-path:none}}
