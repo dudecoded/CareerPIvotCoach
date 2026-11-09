@@ -221,6 +221,22 @@ function App() {
   const completedTasks = tasks.filter((task) => task.done).length
   const progress = Math.round((completedTasks / tasks.length) * 100)
 
+  const profileFields = [
+    Boolean(profileForm.education.trim()),
+    Boolean(profileForm.current_role.trim()),
+    Boolean(profileForm.target_domain.trim()),
+    Boolean(profileForm.experience_level.trim()),
+    profileForm.interests.length > 0,
+    profileForm.goals.length > 0,
+    Boolean(profileForm.learning_style.trim()),
+    profileForm.hours_per_week > 0,
+    profileForm.skills.length > 0 || selectedSkills.length > 0,
+  ]
+  const profileCompletion = Math.round((profileFields.filter(Boolean).length / profileFields.length) * 100)
+  const nextSkill = gaps[0] ?? required[0]
+  const weeklyHours = Math.max(1, Math.min(80, Number(profileForm.hours_per_week) || 5))
+  const weeklyMinutes = weeklyHours * 60
+
   const suggestedProject = useMemo(() => {
     const projects: Record<Career, string> = {
       'Data Analyst': 'Sales insights dashboard using Python, SQL and charts',
@@ -328,6 +344,23 @@ function App() {
             <div className="section-heading"><div><h2>Your career snapshot</h2><p>A quick look at your progress so far.</p></div><span className="muted-label">UPDATED JUST NOW</span></div>
             <div className="stats-grid"><div className="stat-card"><div className="stat-top"><span>Career readiness</span><span className="stat-symbol purple">◉</span></div><div className="stat-value">{assessmentDone ? readiness : '—'}<small>{assessmentDone ? '%' : 'Start assessment'}</small></div><div className="progress-track"><div style={{ width: `${assessmentDone ? readiness : 0}%` }} /></div><p>{assessmentDone ? 'Weighted by your reported proficiency' : 'Complete your assessment to calculate'}</p></div><div className="stat-card"><div className="stat-top"><span>Transferable skills</span><span className="stat-symbol green">↗</span></div><div className="stat-value">{assessmentDone ? matched.length : selectedSkills.length}<small> identified</small></div><p className="positive">Skills you can build on</p></div><div className="stat-card"><div className="stat-top"><span>Skills to develop</span><span className="stat-symbol orange">⌁</span></div><div className="stat-value">{assessmentDone ? gaps.length : '—'}<small> priority areas</small></div><p>Focus on the highest-impact gaps first</p></div><div className="stat-card"><div className="stat-top"><span>Roadmap progress</span><span className="stat-symbol blue">↗</span></div><div className="stat-value">{progress}<small>%</small></div><div className="progress-track blue-track"><div style={{ width: `${progress}%` }} /></div><p>{completedTasks} of {tasks.length} milestones completed</p></div></div>
             <div className="bottom-grid"><section className="panel"><div className="panel-heading"><div><h3>Your next best action</h3><p>One small step. Meaningful momentum.</p></div><span className="sparkle">✦</span></div><div className="action-row"><div className="action-icon">⌘</div><div className="action-text"><span className="tag soft-tag">RECOMMENDED FOR YOU</span><h4>{assessmentDone ? `Learn ${gaps[0] ?? 'build your portfolio'}` : 'Complete your career assessment'}</h4><p>{assessmentDone ? `Spend 30 minutes practising ${gaps[0] ?? 'your project idea'} today.` : 'Tell us about your background and destination role to personalise your plan.'}</p></div><button className="arrow-button" onClick={() => setTab(assessmentDone ? 'Skill gaps' : 'Career assessment')}>→</button></div></section><section className="panel quote-panel"><div className="quote-mark">“</div><p>Your past experience isn't a detour. It's part of the bridge to what's next.</p><span>YOUR CAREER JOURNEY, YOUR WAY</span><div className="quote-decoration">✳</div></section></div>
+            <div className="dashboard-detail-grid">
+              <section className="panel profile-progress-panel">
+                <div className="panel-heading"><div><span className="eyebrow">YOUR FOUNDATION</span><h3>Career profile</h3><p>A stronger profile helps make your plan more relevant.</p></div><strong className="completion-score">{profileCompletion}%</strong></div>
+                <div className="progress-track"><div style={{width:`${profileCompletion}%`}} /></div>
+                <div className="profile-progress-meta"><span>{profileFields.filter(Boolean).length} of {profileFields.length} details completed</span><button className="text-button" onClick={()=>setTab('Profile setup')}>{profileCompletion===100?'Review profile':'Complete profile'} →</button></div>
+              </section>
+              <section className="panel weekly-focus-panel">
+                <div className="panel-heading"><div><span className="eyebrow">YOUR WEEKLY COMMITMENT</span><h3>A pace you can sustain</h3><p>Based on your profile's available study time.</p></div><span className="weekly-hours">{weeklyHours}<small>hrs / wk</small></span></div>
+                <div className="weekly-split"><div><strong>{Math.round(weeklyMinutes*0.5)} min</strong><span>Learn & practise</span></div><div><strong>{Math.round(weeklyMinutes*0.3)} min</strong><span>Build a project</span></div><div><strong>{Math.round(weeklyMinutes*0.2)} min</strong><span>Review & reflect</span></div></div>
+                <button className="text-button" onClick={()=>setTab('Roadmap')}>Open my roadmap →</button>
+              </section>
+              <section className="panel focus-skill-panel">
+                <span className="eyebrow">SUGGESTED FOCUS</span><h3>{assessmentDone ? nextSkill : 'Start with your skill assessment'}</h3>
+                <p>{assessmentDone ? `This is one of the skills in your ${target} skill map that deserves attention next.` : 'Rate your current skills to uncover the most useful areas to work on.'}</p>
+                <button className="primary-button" onClick={()=>setTab(assessmentDone?'Skill gaps':'Career assessment')}>{assessmentDone?'Review skill gaps':'Assess my skills'} <ArrowRight size={15}/></button>
+              </section>
+            </div>
           </>}
 
           {tab === 'Career assessment' && <><div className="page-intro"><div className="eyebrow">STEP 1 · KNOW YOUR STARTING POINT</div><h1>Let's map your <em>next move.</em></h1><p>Share a little about yourself. We'll use it to build a practical transition plan.</p></div><section className="panel form-panel"><div className="form-section-title"><span>01</span><div><h3>Your background</h3><p>Start with where you are today.</p></div></div><div className="form-grid"><label>Your name<input value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name" /></label><label>Current role or background<input value={currentRole} onChange={(e) => setCurrentRole(e.target.value)} placeholder="e.g. Student, teacher, developer" /></label><label>Experience level<select value={experience} onChange={(e) => setExperience(e.target.value)}><option>Beginner</option><option>Some experience</option><option>Experienced</option></select></label><label>What is your main goal?<select value={goal} onChange={(e) => setGoal(e.target.value)}><option>Get internship-ready</option><option>Switch careers</option><option>Get my first job</option><option>Grow in my current field</option></select></label></div><div className="divider" /><div className="form-section-title"><span>02</span><div><h3>Choose your destination</h3><p>Which role would you like to work towards?</p></div></div><div className="career-choice-grid">{(Object.keys(careerSkills) as Career[]).map((career) => <button key={career} className={`career-choice ${target === career ? 'chosen' : ''}`} onClick={() => setTarget(career)}><span className="choice-icon">{career === 'Data Analyst' ? '◈' : career === 'Frontend Developer' ? '⌘' : career === 'Backend Developer' ? '⌁' : career === 'ML Engineer' ? '✳' : career === 'Product Manager' ? '◇' : '◈'}</span><span><strong>{career}</strong><small>{careerSkills[career].slice(0, 3).join(' · ')}</small></span><span className="radio">{target === career ? '✓' : ''}</span></button>)}</div><div className="divider" /><div className="form-section-title"><span>03</span><div><h3>Skills you already have</h3><p>Select everything you feel comfortable with. You can change this later.</p></div></div><div className="skill-picker">{allSkills.map((skill) => {
