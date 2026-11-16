@@ -105,7 +105,6 @@ function App() {
   const wheelDragRef = useRef<{ angle: number; rotation: number } | null>(null)
   useEffect(() => { const phrases = ['TRACE YOUR STRENGTHS', 'CONNECT THE CLUES', 'DISCOVER YOUR NEXT ROLE', 'BUILD YOUR CAREER PATH']; let index = 0; const timer = window.setInterval(() => { index = (index + 1) % phrases.length; setInvestigationPhrase(phrases[index]); }, 2600); return () => window.clearInterval(timer); }, [])
   const [tab, setTab] = useState<Tab>('Overview')
-  const [overviewSlide, setOverviewSlide] = useState(0)
   const [carouselPaused, setCarouselPaused] = useState(false)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [showLanding, setShowLanding] = useState(() => !localStorage.getItem('cpc-access-token'))
