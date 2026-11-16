@@ -58,7 +58,7 @@ export type CoachRequest = {
   history: { role: "user" | "coach"; content: string }[];
 };
 
-export type CoachResponse = { reply: string; mode: "offline" };
+export type CoachResponse = { reply: string; mode: "live" | "offline" };
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   let response: Response;
