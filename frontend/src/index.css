@@ -941,3 +941,33 @@ button{transition:transform .22s ease,box-shadow .22s ease,background-color .22s
 .feature-gallery-caption h3{max-width:450px;margin:10px 0 6px;color:#fff;font:700 clamp(21px,3vw,32px)/1.08 'Space Grotesk',sans-serif;letter-spacing:-.045em}
 .feature-gallery-caption p{margin:0;color:#e1ded6;font:400 11px/1.7 'DM Sans',sans-serif}
 @media(max-width:760px){.feature-gallery-grid{grid-template-columns:1fr}.feature-gallery-card,.feature-gallery-card.feature-gallery-wide{min-height:300px}.landing-feature-gallery{padding:55px 20px 65px}}
+
+
+/* Minimal workspace sidebar: compact, calm and icon-led */
+.app-shell:not(.landing-shell) .sidebar{width:244px;min-width:244px;padding:24px 14px 16px;gap:15px}
+.app-shell:not(.landing-shell) .sidebar .brand{padding:0 3px 17px;border-bottom:1px solid #303030;min-height:56px}
+.workspace-home-brand{display:flex;align-items:center;gap:10px;min-width:0;padding:0;border:0;background:transparent;color:inherit;text-align:left;cursor:pointer}
+.workspace-home-brand .brand-mark{width:38px;height:38px;min-width:38px}
+.workspace-home-brand .brand-copy{display:grid;gap:3px}
+.workspace-home-brand .brand-copy strong{font:700 14px 'Space Grotesk',sans-serif;color:#f7f5ee}
+.workspace-home-brand .brand-copy small{font:600 7px 'DM Sans',sans-serif;letter-spacing:1.2px;color:#aaa59a}
+.workspace-home-brand:hover .brand-mark{transform:rotate(-8deg);transition:transform .25s ease}
+.app-shell:not(.landing-shell) .sidebar .workspace-label{padding:3px 10px;margin:0;font-size:8px;letter-spacing:1.8px}
+.app-shell:not(.landing-shell) .sidebar nav{gap:4px}
+.app-shell:not(.landing-shell) .sidebar .nav-item{min-height:39px;padding:9px 11px;gap:11px;font:600 10px 'DM Sans',sans-serif;border:1px solid transparent}
+.app-shell:not(.landing-shell) .sidebar .nav-icon{width:19px;min-width:19px;font-size:14px;opacity:.85}
+.app-shell:not(.landing-shell) .sidebar .nav-item-featured{min-height:41px;margin:4px 0;border-color:#365f82;background:#172535;color:#d8ecff;box-shadow:inset 2px 0 #2b70b9}
+.app-shell:not(.landing-shell) .sidebar .nav-item.active{background:#e9e5da!important;color:#111!important;border-color:#d8d2c5;border-left:3px solid #2b70b9!important}
+.app-shell:not(.landing-shell) .sidebar .nav-item:hover:not(.active){background:#202020;color:#fff}
+.app-shell:not(.landing-shell) .sidebar .help-card{display:none}
+.app-shell:not(.landing-shell) .sidebar .sidebar-bottom{margin-top:auto;padding-top:10px;border-top:1px solid #303030}
+.app-shell:not(.landing-shell) .sidebar .profile-mini{padding:7px 5px}
+.app-shell:not(.landing-shell) .sidebar.sidebar-collapsed{width:66px;min-width:66px;padding:20px 8px 14px}
+.app-shell:not(.landing-shell) .sidebar.sidebar-collapsed .brand{justify-content:center;padding:0 0 14px}
+.app-shell:not(.landing-shell) .sidebar.sidebar-collapsed .workspace-home-brand .brand-copy,.app-shell:not(.landing-shell) .sidebar.sidebar-collapsed .workspace-label,.app-shell:not(.landing-shell) .sidebar.sidebar-collapsed .nav-label,.app-shell:not(.landing-shell) .sidebar.sidebar-collapsed .sidebar-bottom{display:none}
+.app-shell:not(.landing-shell) .sidebar.sidebar-collapsed .workspace-home-brand .brand-mark{width:36px;height:36px;min-width:36px}
+.app-shell:not(.landing-shell) .sidebar.sidebar-collapsed .sidebar-toggle{right:-3px;top:-7px;width:18px;height:18px;font-size:13px}
+.app-shell:not(.landing-shell) .sidebar.sidebar-collapsed nav{margin-top:19px}
+.app-shell:not(.landing-shell) .sidebar.sidebar-collapsed .nav-item{justify-content:center;min-height:40px;padding:8px 4px}
+.app-shell:not(.landing-shell) .sidebar.sidebar-collapsed .nav-icon{font-size:16px}
+@media(max-width:760px){.app-shell:not(.landing-shell) .sidebar{width:62px;min-width:62px;padding:18px 7px 12px}.app-shell:not(.landing-shell) .sidebar .workspace-home-brand .brand-copy,.app-shell:not(.landing-shell) .sidebar .workspace-label,.app-shell:not(.landing-shell) .sidebar .nav-label,.app-shell:not(.landing-shell) .sidebar .sidebar-bottom{display:none}.app-shell:not(.landing-shell) .sidebar .brand{justify-content:center;padding:0 0 12px}.app-shell:not(.landing-shell) .sidebar .nav-item{justify-content:center;padding:8px 3px}.app-shell:not(.landing-shell) .sidebar .sidebar-toggle{right:-3px;top:-7px;width:18px;height:18px}}
