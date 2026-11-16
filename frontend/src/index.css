@@ -1111,3 +1111,14 @@ body{background:var(--cp-paper);color:var(--cp-ink)}
 @media(max-width:700px){.blog-compose-actions{grid-template-columns:1fr}.blog-feed-toolbar{align-items:flex-start;flex-direction:column}.community-post{padding:17px}.community-post-actions{gap:12px;flex-wrap:wrap}}
 
 .community-comments{border-top:1px solid #eaf0f4;margin-top:14px;padding-top:13px}.community-comment-list{display:grid;gap:10px;margin-bottom:13px}.community-comment{background:#f5f8fa;border-radius:9px;padding:10px 12px}.community-comment strong{font-size:10px;color:#12374d}.community-comment p{font-size:11px;color:#5c6e7b;line-height:1.6;margin:4px 0 0}.community-comments form{display:flex;gap:8px}.community-comments form input{flex:1;min-width:0;border:1px solid #dce5eb;border-radius:8px;padding:10px 12px;font:inherit;font-size:11px}.community-comments form .primary-button{padding:9px 14px;font-size:10px}
+
+
+/* Career compass: slow automatic orbit with a soft blue halo */
+.career-wheel-area{position:relative;isolation:isolate}
+.career-wheel-area:before{content:"";position:absolute;z-index:-1;left:50%;top:54%;width:min(112%,590px);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;pointer-events:none;background:radial-gradient(circle,rgba(43,112,185,.23) 0%,rgba(43,112,185,.13) 34%,rgba(43,112,185,.055) 55%,transparent 72%);filter:blur(13px)}
+.career-wheel-disc{box-shadow:inset 0 0 0 10px rgba(43,112,185,.08),0 0 0 12px rgba(43,112,185,.045),0 0 0 26px rgba(43,112,185,.035),0 18px 48px rgba(43,112,185,.13),0 12px 30px rgba(17,17,17,.06);will-change:transform}
+.career-wheel-disc:before{box-shadow:0 0 24px rgba(43,112,185,.12)}
+.career-wheel-center{box-shadow:0 0 0 1px #2b70b9,0 0 0 9px rgba(43,112,185,.15),0 0 32px rgba(43,112,185,.3)}
+.career-wheel-node{box-shadow:3px 3px 0 #2b70b9,0 5px 18px rgba(43,112,185,.08)}
+.career-wheel-node:hover,.career-wheel-node:focus-visible{box-shadow:5px 5px 0 #2b70b9,0 0 0 4px rgba(43,112,185,.15),0 10px 24px rgba(43,112,185,.18)}
+@media(prefers-reduced-motion:reduce){.career-wheel-disc{will-change:auto;box-shadow:inset 0 0 0 10px rgba(43,112,185,.08),0 0 0 12px rgba(43,112,185,.045),0 12px 30px rgba(17,17,17,.06)}.career-wheel-area:before{filter:none}}
