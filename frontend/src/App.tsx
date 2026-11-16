@@ -2,11 +2,11 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { Search, Sun, Moon, UserRound, ArrowRight, Sparkles, X, LockKeyhole } from 'lucide-react'
 import './index.css'
 import InterviewStudio from './InterviewStudio'
-import { saveAssessment, sendCoachMessage, reviewResume, generateInterviewPrep, getAssessmentHistory, authenticate, authenticateWithGoogle, setAccessToken, saveUserProfile, getDomainLearning, getAnalytics, getCurrentUser, getRecommendations, type UserProfile, type AssessmentResult, type ResumeReviewResult, type InterviewPrepResult } from './api'
+import { saveAssessment, sendCoachMessage, reviewResume, generateInterviewPrep, getAssessmentHistory, authenticate, authenticateWithGoogle, setAccessToken, saveUserProfile, getDomainLearning, getAnalytics, getCurrentUser, getRecommendations, getPosts, createPost, togglePostLike, togglePostSave, type CommunityPost, type UserProfile, type AssessmentResult, type ResumeReviewResult, type InterviewPrepResult } from './api'
 
 type SkillProficiency = 'Beginner' | 'Intermediate' | 'Advanced'
 type Career = 'Data Analyst' | 'Frontend Developer' | 'Backend Developer' | 'ML Engineer' | 'Product Manager' | 'UI/UX Designer'
-type Tab = 'Pomodoro' | 'Overview' | 'Career assessment' | 'Skill gaps' | 'Roadmap' | 'Career paths' | 'AI coach' | 'Resume review' | 'Interview prep' | 'Assessment history' | 'AI Interview Studio' | 'Profile setup' | 'How to use' | 'Domain learning' | 'Courses & inspiration' | 'Portfolio'
+type Tab = 'Blog' | 'Pomodoro' | 'Overview' | 'Career assessment' | 'Skill gaps' | 'Roadmap' | 'Career paths' | 'AI coach' | 'Resume review' | 'Interview prep' | 'Assessment history' | 'AI Interview Studio' | 'Profile setup' | 'How to use' | 'Domain learning' | 'Courses & inspiration' | 'Portfolio'
 
 const careerSkills: Record<Career, string[]> = {
   'Data Analyst': ['Excel', 'SQL', 'Python', 'Statistics', 'Data visualization', 'Communication'],
@@ -106,6 +106,16 @@ function App() {
   useEffect(() => { const phrases = ['TRACE YOUR STRENGTHS', 'CONNECT THE CLUES', 'DISCOVER YOUR NEXT ROLE', 'BUILD YOUR CAREER PATH']; let index = 0; const timer = window.setInterval(() => { index = (index + 1) % phrases.length; setInvestigationPhrase(phrases[index]); }, 2600); return () => window.clearInterval(timer); }, [])
   const [tab, setTab] = useState<Tab>('Overview')
   const [carouselPaused, setCarouselPaused] = useState(false)
+  const [coachMode, setCoachMode] = useState<'live' | 'offline'>('offline')
+  const [communityPosts, setCommunityPosts] = useState<CommunityPost[]>([])
+  const [blogSavedOnly, setBlogSavedOnly] = useState(false)
+  const [blogLoading, setBlogLoading] = useState(false)
+  const [blogError, setBlogError] = useState('')
+  const [blogTitle, setBlogTitle] = useState('')
+  const [blogBody, setBlogBody] = useState('')
+  const [blogCategory, setBlogCategory] = useState('Career notes')
+  const [blogSource, setBlogSource] = useState('')
+  const [blogPublishing, setBlogPublishing] = useState(false)
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [showLanding, setShowLanding] = useState(() => !localStorage.getItem('cpc-access-token'))
   const [theme, setTheme] = useState<'light' | 'dark'>(() => (localStorage.getItem('cpc-theme') as 'light' | 'dark') || 'light')
@@ -255,6 +265,16 @@ function App() {
     return () => { active = false }
   }, [accessToken])
 
+  useEffect(() => {
+    if (tab !== 'Blog') return
+    let active = true
+    setBlogLoading(true); setBlogError('')
+    getPosts(blogSavedOnly).then(result => { if(active) setCommunityPosts(result.posts) })
+      .catch(error => { if(active) setBlogError(error instanceof Error ? error.message : 'Could not load the community journal.') })
+      .finally(() => { if(active) setBlogLoading(false) })
+    return () => { active = false }
+  }, [tab, blogSavedOnly, accessToken])
+
   // Re-rank the curated catalogue whenever the learner's profile context changes.
   useEffect(() => {
     if (tab !== 'Courses & inspiration') return
@@ -366,6 +386,7 @@ function App() {
         goal,
         history: previousChat.map((item) => ({ role: item.role, content: item.text })),
       })
+      setCoachMode(result.mode)
       setChat((current) => [...current, { role: 'coach', text: result.reply }])
     } catch (error) {
       setChatError(error instanceof Error ? error.message : 'The coach could not respond.')
@@ -378,7 +399,7 @@ function App() {
     }
   }
 
-  const tabs: Tab[] = ['Pomodoro', 'Overview', 'AI Interview Studio', 'Career assessment', 'Skill gaps', 'Roadmap', 'Career paths', 'AI coach', 'Resume review', 'Interview prep', 'Assessment history', 'Profile setup', 'How to use', 'Domain learning', 'Courses & inspiration', 'Portfolio']
+  const tabs: Tab[] = ['Blog', 'Pomodoro', 'Overview', 'AI Interview Studio', 'Career assessment', 'Skill gaps', 'Roadmap', 'Career paths', 'AI coach', 'Resume review', 'Interview prep', 'Assessment history', 'Profile setup', 'How to use', 'Domain learning', 'Courses & inspiration', 'Portfolio']
 
   return (
     <div className={showLanding ? "app-shell landing-shell" : "app-shell"} data-theme={theme}>
@@ -509,7 +530,20 @@ function App() {
 
           {tab === 'Career paths' && <><div className="page-intro"><div className="eyebrow">EXPLORE YOUR OPTIONS</div><h1>There is more than <em>one way forward.</em></h1><p>Explore a few common career directions and choose one to analyse.</p></div><div className="career-catalog">{(Object.keys(careerSkills) as Career[]).map((career, index) => <article className={`career-card ${target === career ? 'current-career' : ''}`} key={career}><div className="career-card-top"><span className="choice-icon">{['◈', '⌘', '⌁', '✳', '◇', '◈'][index]}</span>{target === career && <span className="tag">SELECTED</span>}</div><h3>{career}</h3><p>{['Turn data into clear insights that help teams make decisions.', 'Build accessible, responsive interfaces for web experiences.', 'Create APIs, services and systems that power applications.', 'Develop and evaluate machine-learning solutions.', 'Connect user needs, business goals and product delivery.', 'Design intuitive digital experiences around real user needs.'][index]}</p><div className="career-skills">{careerSkills[career].slice(0, 4).map((skill) => <span key={skill}>{skill}</span>)}</div><button className="text-button" onClick={() => { setTarget(career); setTab('Career assessment') }}>Explore this path →</button></article>)}</div></>}
 
-          {tab === 'AI coach' && <><div className="page-intro"><div className="eyebrow">YOUR CAREER COMPANION</div><h1>A little guidance can <em>go a long way.</em></h1><p>Ask for practical next steps based on your current career goal.</p></div><section className="panel chat-panel"><div className="chat-header"><div className="coach-avatar">✦</div><div><h3>Career Coach</h3><p><span className="online-dot" /> Offline career guidance · no API key required</p></div><span className="tag">OFFLINE</span></div><div className="chat-messages">{chat.map((message, index) => <div key={index} className={`chat-message ${message.role}`}>{message.role === 'coach' && <span className="message-avatar">✦</span>}<div>{message.text}</div></div>)}</div>{chatLoading && <div className="chat-message coach"><span className="message-avatar">✦</span><div>Thinking through your career context…</div></div>}<div className="prompt-suggestions"><button onClick={() => setQuestion('What should I learn first?')}>What should I learn first?</button><button onClick={() => setQuestion('Suggest a portfolio project for me')}>Suggest a portfolio project</button><button onClick={() => setQuestion('How can I prepare for an internship?')}>Prepare for an internship</button></div>{chatError && <div className="notice" role="alert">{chatError}</div>}<form className="chat-input" onSubmit={(e) => { e.preventDefault(); void sendMessage() }}><input value={question} onChange={(e) => setQuestion(e.target.value)} placeholder="Ask about your next career step..." /><button className="primary-button" type="submit" disabled={chatLoading || !question.trim()}>{chatLoading ? 'Thinking…' : 'Send ↑'}</button></form></section></>}
+          {tab === 'Blog' && <>
+            <div className="page-intro"><div className="eyebrow">CAREERPIVOT JOURNAL · COMMUNITY</div><h1>Ideas grow when <em>shared.</em></h1><p>Write field notes, share useful resources, and save posts worth returning to. Your posts and bookmarks are linked to your account.</p></div>
+            <section className="panel blog-compose-panel"><div className="panel-heading"><div><h3>Publish a field note</h3><p>Share a lesson, project update, career insight or resource with the community.</p></div><span className="tag">YOUR JOURNAL</span></div>
+              <form className="blog-compose-form" onSubmit={async event=>{event.preventDefault();if(!blogTitle.trim()||blogBody.trim().length<20)return;setBlogPublishing(true);setBlogError('');try{const post=await createPost({title:blogTitle,body:blogBody,category:blogCategory,source_url:blogSource.trim()||undefined});setCommunityPosts(current=>[post,...current]);setBlogTitle('');setBlogBody('');setBlogSource('');setBlogSavedOnly(false)}catch(error){setBlogError(error instanceof Error?error.message:'Could not publish your post.')}finally{setBlogPublishing(false)}}}>
+                <input value={blogTitle} onChange={event=>setBlogTitle(event.target.value)} placeholder="Give your field note a title…" maxLength={180} required/>
+                <textarea value={blogBody} onChange={event=>setBlogBody(event.target.value)} placeholder="What have you learned, built, questioned or discovered?" rows={5} minLength={20} maxLength={12000} required/>
+                <div className="blog-compose-actions"><select value={blogCategory} onChange={event=>setBlogCategory(event.target.value)}><option>Career notes</option><option>Projects</option><option>Learning</option><option>Interview insights</option><option>Resources</option></select><input value={blogSource} onChange={event=>setBlogSource(event.target.value)} placeholder="Optional resource URL"/><button className="primary-button" disabled={blogPublishing||!blogTitle.trim()||blogBody.trim().length<20}>{blogPublishing?'Publishing…':'Publish note ↗'}</button></div>
+              </form>
+            </section>
+            <div className="blog-feed-toolbar"><div><button className={!blogSavedOnly?'active':''} onClick={()=>setBlogSavedOnly(false)}>Latest posts</button><button className={blogSavedOnly?'active':''} onClick={()=>setBlogSavedOnly(true)}>▣ Saved by me</button></div><span>{blogSavedOnly?'YOUR READING LIST':'COMMUNITY FIELD NOTES'}</span></div>
+            {blogError&&<div className="notice" role="alert">{blogError}</div>}
+            {blogLoading?<section className="panel">Loading your journal…</section>:communityPosts.length===0?<section className="panel blog-empty"><div>✳</div><h3>{blogSavedOnly?'Your reading list is empty.':'The journal is waiting for its first story.'}</h3><p>{blogSavedOnly?'Save a post to keep it close for later.':'Be the first to publish a field note and start the conversation.'}</p></section>:<div className="community-feed">{communityPosts.map(post=><article className="panel community-post" key={post.id}><div className="community-post-meta"><span className="tag">{post.category}</span><span>{post.author_name} · {new Date(post.created_at).toLocaleDateString()}</span></div><h3>{post.title}</h3><p className="community-post-body">{post.body}</p>{post.source_url&&<a className="community-source-link" href={post.source_url} target="_blank" rel="noreferrer">Open linked resource ↗</a>}<div className="community-post-actions"><button onClick={async()=>{try{const result=await togglePostLike(post.id);setCommunityPosts(current=>current.map(item=>item.id===post.id?{...item,liked:result.liked,likes:result.likes}:item))}catch(error){setBlogError(error instanceof Error?error.message:'Sign in to like posts.')}}}>{post.liked?'♥':'♡'} {post.likes}</button><button onClick={async()=>{try{const result=await togglePostSave(post.id);setCommunityPosts(current=>current.map(item=>item.id===post.id?{...item,saved:result.saved}:item))}catch(error){setBlogError(error instanceof Error?error.message:'Could not save post.')}}}>{post.saved?'▣ Saved':'▢ Save for later'}</button><span>◌ {post.comments_count} comments</span></div></article>)}</div>}
+          </>}
+          {tab === 'AI coach' && <><div className="page-intro"><div className="eyebrow">YOUR CAREER COMPANION</div><h1>A little guidance can <em>go a long way.</em></h1><p>Ask for practical next steps based on your current career goal.</p></div><section className="panel chat-panel"><div className="chat-header"><div className="coach-avatar">✦</div><div><h3>Career Coach</h3><p><span className="online-dot" /> {coachMode === "live" ? "Live AI guidance · model connected" : "Local guidance · configure a model API for live replies"}</p></div><span className="tag">{coachMode === "live" ? "LIVE AI" : "OFFLINE"}</span></div><div className="chat-messages">{chat.map((message, index) => <div key={index} className={`chat-message ${message.role}`}>{message.role === 'coach' && <span className="message-avatar">✦</span>}<div>{message.text}</div></div>)}</div>{chatLoading && <div className="chat-message coach"><span className="message-avatar">✦</span><div>Thinking through your career context…</div></div>}<div className="prompt-suggestions"><button onClick={() => setQuestion('What should I learn first?')}>What should I learn first?</button><button onClick={() => setQuestion('Suggest a portfolio project for me')}>Suggest a portfolio project</button><button onClick={() => setQuestion('How can I prepare for an internship?')}>Prepare for an internship</button></div>{chatError && <div className="notice" role="alert">{chatError}</div>}<form className="chat-input" onSubmit={(e) => { e.preventDefault(); void sendMessage() }}><input value={question} onChange={(e) => setQuestion(e.target.value)} placeholder="Ask about your next career step..." /><button className="primary-button" type="submit" disabled={chatLoading || !question.trim()}>{chatLoading ? 'Thinking…' : 'Send ↑'}</button></form></section></>}
 
           {tab === 'Resume review' && <>
             <div className="page-intro"><div className="eyebrow">CAREER TOOL · RESUME REVIEW</div><h1>Make your experience <em>stand out.</em></h1><p>Paste your resume text for a first-pass review against your selected role. Your text is sent to your local backend and is not stored by this tool.</p></div>
