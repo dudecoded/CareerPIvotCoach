@@ -103,6 +103,13 @@ function App() {
   const [careerWheelRotation, setCareerWheelRotation] = useState(0)
   const [investigationPhrase, setInvestigationPhrase] = useState('TRACE YOUR STRENGTHS')
   const wheelDragRef = useRef<{ angle: number; rotation: number } | null>(null)
+  useEffect(() => {
+    if (!showLanding || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return
+    const timer = window.setInterval(() => {
+      if (!wheelDragRef.current) setCareerWheelRotation(rotation => rotation + 0.45)
+    }, 50)
+    return () => window.clearInterval(timer)
+  }, [showLanding])
   useEffect(() => { const phrases = ['TRACE YOUR STRENGTHS', 'CONNECT THE CLUES', 'DISCOVER YOUR NEXT ROLE', 'BUILD YOUR CAREER PATH']; let index = 0; const timer = window.setInterval(() => { index = (index + 1) % phrases.length; setInvestigationPhrase(phrases[index]); }, 2600); return () => window.clearInterval(timer); }, [])
   const [tab, setTab] = useState<Tab>('Overview')
   const [carouselPaused, setCarouselPaused] = useState(false)
