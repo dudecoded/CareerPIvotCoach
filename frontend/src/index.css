@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@700;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500;6..96,600&family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
 
@@ -972,7 +973,6 @@ button{transition:transform .22s ease,box-shadow .22s ease,background-color .22s
 .app-shell:not(.landing-shell) .sidebar.sidebar-collapsed .nav-icon{font-size:16px}
 @media(max-width:760px){.app-shell:not(.landing-shell) .sidebar{width:62px;min-width:62px;padding:18px 7px 12px}.app-shell:not(.landing-shell) .sidebar .workspace-home-brand .brand-copy,.app-shell:not(.landing-shell) .sidebar .workspace-label,.app-shell:not(.landing-shell) .sidebar .nav-label,.app-shell:not(.landing-shell) .sidebar .sidebar-bottom{display:none}.app-shell:not(.landing-shell) .sidebar .brand{justify-content:center;padding:0 0 12px}.app-shell:not(.landing-shell) .sidebar .nav-item{justify-content:center;padding:8px 3px}.app-shell:not(.landing-shell) .sidebar .sidebar-toggle{right:-3px;top:-7px;width:18px;height:18px}}
 
-@import url('https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@700;900&display=swap');
 .overview-carousel{margin:0 0 29px;padding:22px 22px 15px;background:linear-gradient(135deg,#fff 0%,#f8f5ff 100%);border:1px solid #ece6fb;border-radius:16px;overflow:hidden;box-shadow:0 8px 26px rgba(72,49,130,.045)}
 .overview-carousel-head{display:flex;align-items:flex-end;justify-content:space-between;gap:18px;margin-bottom:17px}
 .overview-carousel-head h2{margin:7px 0 5px;font:900 clamp(23px,3vw,34px)/1.05 'Anton','Noto Sans JP',Impact,sans-serif;letter-spacing:.015em;text-transform:uppercase;color:#24233a}.overview-carousel-head h2 em{font-style:normal;color:#8061de}.overview-carousel-head p{margin:0;color:#9290a8;font-size:11px}
