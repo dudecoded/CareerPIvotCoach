@@ -25,7 +25,7 @@ def _live_reply(payload: CoachChatRequest) -> str | None:
         f"Goal: {payload.goal}"
     )
     messages = [{"role": "system", "content": system}, {"role": "user", "content": "Learner context:\n" + context}]
-    messages.extend({"role": item.role, "content": item.content} for item in payload.history[-12:])
+    messages.extend({"role": "assistant" if item.role == "coach" else "user", "content": item.content} for item in payload.history[-12:])
     messages.append({"role": "user", "content": payload.message})
     body = json.dumps({"model": model, "messages": messages, "temperature": 0.65, "max_tokens": 700}).encode()
     request = urllib.request.Request(
