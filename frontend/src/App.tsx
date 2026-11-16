@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Search, Sun, Moon, UserRound, ArrowRight, Sparkles, X, LockKeyhole } from 'lucide-react'
 import './index.css'
 import InterviewStudio from './InterviewStudio'
@@ -275,6 +275,12 @@ function App() {
   useEffect(() => {
     if (tab !== 'Blog') return
     let active = true
+    queueMicrotask(() => {
+      if (active) {
+        setBlogLoading(true)
+        setBlogError('')
+      }
+    })
     getPosts(blogSavedOnly).then(result => {
       if (!active) return
       setBlogError('')
