@@ -8,6 +8,15 @@ type SkillProficiency = 'Beginner' | 'Intermediate' | 'Advanced'
 type Career = 'Data Analyst' | 'Frontend Developer' | 'Backend Developer' | 'ML Engineer' | 'Product Manager' | 'UI/UX Designer'
 type Tab = 'Blog' | 'Pomodoro' | 'Overview' | 'Career assessment' | 'Skill gaps' | 'Roadmap' | 'Career paths' | 'AI coach' | 'Resume review' | 'Interview prep' | 'Assessment history' | 'AI Interview Studio' | 'Profile setup' | 'How to use' | 'Domain learning' | 'Courses & inspiration' | 'Portfolio'
 
+type GoogleIdentityApi = {
+  accounts: {
+    id: {
+      initialize: (options: { client_id: string; callback: (response: { credential?: string }) => void | Promise<void> }) => void
+      renderButton: (element: HTMLElement, options: { theme: 'outline'; size: 'large'; text: 'continue_with' | 'signup_with'; shape: 'rectangular'; width: number }) => void
+    }
+  }
+}
+
 const careerSkills: Record<Career, string[]> = {
   'Data Analyst': ['Excel', 'SQL', 'Python', 'Statistics', 'Data visualization', 'Communication'],
   'Frontend Developer': ['HTML', 'CSS', 'JavaScript', 'React', 'Git', 'Responsive design'],
@@ -100,9 +109,7 @@ function getInitialSkillProficiencies(): Record<string, SkillProficiency> {
 
 function App() {
   const [compassRotation, setCompassRotation] = useState(0)
-  const [careerWheelRotation, setCareerWheelRotation] = useState(0)
   const [investigationPhrase, setInvestigationPhrase] = useState('TRACE YOUR STRENGTHS')
-  const wheelDragRef = useRef<{ angle: number; rotation: number } | null>(null)
   useEffect(() => { const phrases = ['TRACE YOUR STRENGTHS', 'CONNECT THE CLUES', 'DISCOVER YOUR NEXT ROLE', 'BUILD YOUR CAREER PATH']; let index = 0; const timer = window.setInterval(() => { index = (index + 1) % phrases.length; setInvestigationPhrase(phrases[index]); }, 2600); return () => window.clearInterval(timer); }, [])
   const [tab, setTab] = useState<Tab>('Overview')
   const [carouselPaused, setCarouselPaused] = useState(false)
@@ -153,15 +160,12 @@ function App() {
   useEffect(() => {
     if (!authOpen) return
     const clientId = import.meta.env.VITE_GOOGLE_CLIENT_ID as string | undefined
-    if (!clientId) {
-      setAuthMessage('Google sign-in is not configured in the frontend. Add VITE_GOOGLE_CLIENT_ID to frontend/.env.local and restart Vite.')
-      return
-    }
+    if (!clientId) return
     const mount = document.getElementById('google-signin-button')
     if (!mount) return
     let active = true
     const initialize = () => {
-      const google = (window as any).google
+      const google = (window as Window & { google?: GoogleIdentityApi }).google
       if (!google || !active) return
       google.accounts.id.initialize({
         client_id: clientId,
@@ -271,10 +275,16 @@ function App() {
   useEffect(() => {
     if (tab !== 'Blog') return
     let active = true
-    setBlogLoading(true); setBlogError('')
-    getPosts(blogSavedOnly).then(result => { if(active) setCommunityPosts(result.posts) })
-      .catch(error => { if(active) setBlogError(error instanceof Error ? error.message : 'Could not load the community journal.') })
-      .finally(() => { if(active) setBlogLoading(false) })
+    getPosts(blogSavedOnly).then(result => {
+      if (!active) return
+      setBlogError('')
+      setCommunityPosts(result.posts)
+      setBlogLoading(false)
+    }).catch(error => {
+      if (!active) return
+      setBlogError(error instanceof Error ? error.message : 'Could not load the community journal.')
+      setBlogLoading(false)
+    })
     return () => { active = false }
   }, [tab, blogSavedOnly, accessToken])
 
@@ -612,7 +622,7 @@ function App() {
         <div className="auth-form-side"><div className="auth-form-wrap"><div className="auth-mobile-brand"><div className="brand-mark">CP</div><strong>CareerPivot</strong></div><div className="eyebrow">{authMode === 'login' ? 'WELCOME BACK' : 'START YOUR JOURNEY'}</div><h2>{authMode === 'login' ? 'Good to see you again.' : 'Create your workspace.'}</h2><p className="auth-subtitle">{authMode === 'login' ? 'Sign in to continue building your next move.' : 'A few details and your next chapter begins.'}</p>
           <div className="auth-provider-grid"><div id="google-signin-button" className="google-signin-mount" /><button type="button" onClick={() => setAuthMessage('GitHub sign-in will be added after Google sign-in is verified.')}><span className="provider-brand github-brand">GH</span> GitHub</button></div><div className="auth-divider"><span>or continue with email</span></div>
           <form className="auth-form" onSubmit={async (event) => { event.preventDefault(); setAuthLoading(true); setAuthMessage(''); try { const user = await authenticate(authMode, { ...(authMode === 'signup' ? { name: authName } : {}), email: authEmail, password: authPassword }); setAccessTokenState(localStorage.getItem('cpc-access-token') || ''); setName(user.name); setShowLanding(false); setAuthOpen(false); setAuthPassword(''); if (authMode === 'signup' || !user.profile || Object.keys(user.profile).length === 0) setTab('Profile setup'); else { setProfileForm(p => ({...p, ...(user.profile as Partial<UserProfile>)})); setCurrentRole(String(user.profile.current_role || 'Student')); setTab('Overview'); } } catch (error) { setAuthMessage(error instanceof Error ? error.message : 'Authentication failed.'); } finally { setAuthLoading(false); } }}>{authMode === 'signup' && <label>Full name<input required minLength={2} value={authName} onChange={(e) => setAuthName(e.target.value)} placeholder="Your name" /></label>}<label>Email address<input type="email" required value={authEmail} onChange={(e) => setAuthEmail(e.target.value)} placeholder="you@example.com" /></label><label>Password<input type="password" required minLength={8} value={authPassword} onChange={(e) => setAuthPassword(e.target.value)} placeholder="At least 8 characters" /></label>{authMode === 'signup' && <label className="auth-check"><input type="checkbox" required/> <span>I agree to the terms and privacy policy.</span></label>}<button className="primary-button auth-submit" type="submit" disabled={authLoading}>{authLoading ? 'Please wait…' : authMode === 'login' ? 'Sign in' : 'Create account'} <ArrowRight size={16}/></button></form>
-          {authMessage && <div className="auth-message" role="status">{authMessage}</div>}<p className="auth-switch">{authMode === 'login' ? "Don't have an account?" : 'Already have an account?'} <button onClick={() => { setAuthMode(authMode === 'login' ? 'signup' : 'login'); setAuthMessage('') }}>{authMode === 'login' ? 'Create account' : 'Sign in'}</button></p><button className="guest-link" onClick={() => setAuthOpen(false)}>Continue in preview mode <ArrowRight size={14}/></button><p className="auth-privacy"><LockKeyhole size={12}/> Email and Google sign-in are connected. GitHub sign-in is coming next.</p>
+          {(authMessage || !import.meta.env.VITE_GOOGLE_CLIENT_ID) && <div className="auth-message" role="status">{authMessage || 'Google sign-in is not configured. Add VITE_GOOGLE_CLIENT_ID to frontend/.env.local and restart Vite.'}</div>}<p className="auth-switch">{authMode === 'login' ? "Don't have an account?" : 'Already have an account?'} <button onClick={() => { setAuthMode(authMode === 'login' ? 'signup' : 'login'); setAuthMessage('') }}>{authMode === 'login' ? 'Create account' : 'Sign in'}</button></p><button className="guest-link" onClick={() => setAuthOpen(false)}>Continue in preview mode <ArrowRight size={14}/></button><p className="auth-privacy"><LockKeyhole size={12}/> Email and Google sign-in are connected. GitHub sign-in is coming next.</p>
         </div></div>
       </div>}
     </div>
