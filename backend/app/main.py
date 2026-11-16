@@ -13,6 +13,8 @@ from app.api.routes.learning import router as learning_router
 from app.db.database import Base, engine
 from app.models.assessment import Assessment  # noqa: F401
 from app.models.user import User  # noqa: F401
+from app.models.post import Post, PostLike, PostBookmark, PostComment  # noqa: F401
+from app.api.routes.posts import router as posts_router
 Base.metadata.create_all(bind=engine)
 # Lightweight SQLite migration for databases created before account ownership existed.
 with engine.begin() as connection:
