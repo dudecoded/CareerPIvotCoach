@@ -1,60 +1,80 @@
 # CareerPivotCoach
 
-CareerPivotCoach helps students and early-career professionals plan a transition into a target career. It combines a skills assessment, proficiency-weighted readiness estimate, gap analysis, a 90-day starter roadmap, progress tracking, an offline career coach, resume keyword review, and interview practice.
+CareerPivotCoach helps students and early-career professionals plan a transition into a target career. It brings together career assessment, skill-gap analysis, a 90-day starter roadmap, progress tracking, an offline career coach, resume keyword review, and interview practice.
 
-> **Status:** Active development. Email/password accounts, account-owned assessment history, profile onboarding, domain learning guides and per-account analytics are now available on the feature branch. OAuth providers and production deployment hardening are not yet configured.
+> **Project status:** Active development. The feature branch includes email/password accounts, optional Google sign-in, account-owned assessment history, profile onboarding, domain learning guides, and per-account analytics. The application is suitable for local development and evaluation, but it is **not yet hardened for public production deployment**.
 
 ## Features
 
-- **Career assessment:** choose a target role, record current skills, and rate each skill as Beginner, Intermediate, or Advanced.
-- **Weighted readiness estimate:** Beginner = 0.35, Intermediate = 0.70, Advanced = 1.0. The score is a planning signal, not a prediction of employability.\n- **Experimental ML skill similarity:** an unsupervised TF-IDF character n-gram endpoint suggests related skill terms. Suggestions require user confirmation and are not automatically counted as proficiency.
-- **Skill gap analysis:** compare selected skills with the target-role skill map.
-- **90-day roadmap:** review milestones and mark progress. Frontend preferences and task progress persist in browser local storage.
-- **Multi-user accounts:** email/password registration and login with password hashing and signed bearer tokens. Assessment records and analytics are scoped to the authenticated account.\n- **Personal profile:** save education, current role, target domain, interests, goals, learning preference and weekly study availability.\n- **Domain learning:** curated starter topics, portfolio projects and practice prompts for supported career domains.\n- **Assessment history and analytics:** view account-owned assessments and a readiness-over-time chart backed by SQLite.
-- **Offline career coach:** context-aware guidance for learning plans, projects, skill gaps, and internship preparation. No API key required.
-- **Resume review:** paste resume text for a first-pass target-role keyword and writing review. The text is processed by the local backend and is not persisted.
-- **Interview preparation:** generate role-specific practice questions and answer guidance.
-- **AI Interview Studio:** webcam preview with MediaPipe face and hand landmarks in the browser, plus periodic OpenCV face/eye-region and lighting checks through the local FastAPI backend.
-- **Fullscreen voice mock interviews:** fullscreen is required to start or resume a session; role-based question banks, spoken question playback, browser speech-to-text, editable transcripts, timed sessions, and a practice summary with transparent heuristic feedback.
+- **Career assessment:** Choose a target role, record current skills, and rate each skill as Beginner, Intermediate, or Advanced.
+- **Weighted readiness estimate:** Beginner = 0.35, Intermediate = 0.70, Advanced = 1.0. This is a planning signal, not a prediction of employability.
+- **Skill-gap analysis:** Compare selected skills with the target-role skill map and identify areas to work on.
+- **90-day roadmap:** Review milestones and track progress. Roadmap preferences and task progress are stored in browser local storage.
+- **Accounts and profiles:** Register and sign in with email/password. The backend also provides an optional Google sign-in endpoint that requires server-side Google OAuth configuration.
+- **Assessment history and analytics:** Save assessments to the account and view account-scoped history and readiness trends.
+- **Profile onboarding:** Save education, current role, target domain, interests, goals, learning preference, and weekly study availability.
+- **Domain learning guides:** Explore starter topics, portfolio projects, and practice prompts for supported career domains.
+- **Offline career coach:** Get context-aware guidance for learning plans, projects, skill gaps, and internship preparation. No AI provider API key is required.
+- **Resume review:** Paste resume text for a first-pass target-role keyword and writing review. The review is processed by the backend and is not persisted by this endpoint.
+- **Interview preparation:** Generate role-specific practice questions and answer guidance.
+- **AI Interview Studio:** Browser-based webcam preview with MediaPipe face and hand landmarks, plus periodic OpenCV checks through the FastAPI backend.
+- **Fullscreen voice mock interviews:** Practice with role-based question banks, spoken question playback, browser speech-to-text, editable transcripts, timed sessions, and heuristic practice feedback.
 
-The resume review and offline coach are rule-based features. They are not an ATS, a substitute for human career advice, or a live generative AI model.
+The offline coach, resume review, and interview feedback are rule-based features. They are not a live generative AI model, an applicant tracking system (ATS), or a substitute for human career advice.
 
 ## Tech stack
 
-- Frontend: React 19, TypeScript, Vite, custom CSS
-- Backend: Python, FastAPI, Pydantic, SQLAlchemy
-- Database: SQLite for local development
-- Computer vision: OpenCV (backend), MediaPipe Tasks Vision (browser)
-- Tests: pytest, FastAPI TestClient
+- **Frontend:** React 19, TypeScript, Vite
+- **Backend:** Python, FastAPI, Pydantic, SQLAlchemy
+- **Database:** SQLite by default for local development
+- **Computer vision:** OpenCV (backend), MediaPipe Tasks Vision (browser)
+- **Testing:** pytest, FastAPI TestClient, ESLint, TypeScript, Vite build
 
 ## Repository structure
 
 ```text
 CareerPIvotCoach/
 ├── frontend/
+│   ├── public/
 │   ├── src/
 │   │   ├── App.tsx
 │   │   ├── api.ts
 │   │   ├── InterviewStudio.tsx
+│   │   ├── VoiceInterview.tsx
 │   │   └── index.css
 │   └── package.json
 ├── backend/
 │   ├── app/
 │   │   ├── api/routes/
-│   │   ├── schemas/
-│   │   ├── services/
+│   │   ├── core/
 │   │   ├── db/
-│   │   └── models/
+│   │   ├── models/
+│   │   ├── schemas/
+│   │   └── services/
 │   ├── tests/
 │   └── requirements.txt
+├── docs/
 └── README.md
 ```
 
-## Run locally (Windows PowerShell)
+## Getting started
 
-Open two terminals from the repository root.
+### Prerequisites
 
-### 1. Backend
+- Python 3.13
+- Node.js 22 and npm
+- Git
+
+### 1. Clone the repository
+
+```powershell
+git clone https://github.com/dudecoded/CareerPIvotCoach.git
+cd CareerPIvotCoach
+```
+
+### 2. Start the backend
+
+Open a terminal at the repository root:
 
 ```powershell
 cd backend
@@ -64,9 +84,11 @@ python -m pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
-API docs: http://127.0.0.1:8000/docs
+The API runs at http://127.0.0.1:8000. Interactive API documentation is available at http://127.0.0.1:8000/docs.
 
-### 2. Frontend
+### 3. Start the frontend
+
+Open a second terminal at the repository root:
 
 ```powershell
 cd frontend
@@ -76,45 +98,94 @@ npm run dev
 
 Open the Vite URL shown in the terminal, usually http://localhost:5173.
 
-Optional: set `VITE_API_BASE_URL` in a frontend `.env.local` if the API is hosted somewhere other than http://127.0.0.1:8000.
+The frontend uses http://127.0.0.1:8000 as its default API base. To use a different backend URL, create `frontend/.env.local` and set:
 
-## Run checks
+```dotenv
+VITE_API_BASE_URL=http://127.0.0.1:8000
+```
 
-Backend, from `backend/` with the virtual environment activated:
+Restart the Vite development server after changing environment variables.
+
+## Configuration and security
+
+### Application signing secret
+
+The backend currently has a development fallback for `CPC_SECRET_KEY`. **Do not use that fallback in a deployed environment.** Set a long, random, private value before starting the backend.
+
+PowerShell example:
+
+```powershell
+$env:CPC_SECRET_KEY = "replace-with-a-long-random-secret"
+uvicorn app.main:app --reload
+```
+
+Use your hosting provider's secret/environment-variable manager in deployment. Never commit real secrets to Git.
+
+### Optional Google sign-in
+
+The backend Google sign-in endpoint requires a Google OAuth client ID. Configure `GOOGLE_CLIENT_ID` on the backend and the matching client ID in the frontend's Google sign-in configuration. See [docs/google-signin-setup.md](docs/google-signin-setup.md) for setup details. Google sign-in is not configured automatically by the local setup. GitHub OAuth is not currently provided.
+
+### Current security and deployment limitations
+
+- Access tokens currently last seven days. There is no refresh-token or server-side token-revocation flow.
+- Add rate limiting, HTTPS, monitoring, backups, and a security review before exposing the application publicly.
+- Assessment history and analytics are scoped to the authenticated account. Other features, including coach conversations, resume reviews, and interview practice, are not all persisted as account-owned records.
+- The default database is SQLite. The current database configuration is local-development oriented; PostgreSQL support, production migrations, and deployment database configuration still need to be implemented and tested.
+- CORS currently allows local development origins. Configure allowed production frontend origins before deployment.
+- The backend currently creates tables at application startup and includes a lightweight SQLite migration for assessment ownership. Use a proper migration system before production database changes.
+
+## API overview
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| GET | `/api/health` | Health check |
+| POST | `/api/auth/register` | Register an account |
+| POST | `/api/auth/login` | Sign in with email and password |
+| POST | `/api/auth/google` | Sign in with a Google ID token (requires configuration) |
+| GET | `/api/auth/me` | Get the authenticated account |
+| GET / PUT | `/api/profile` | Read or update the authenticated user's profile |
+| GET | `/api/analytics/summary` | Get account-scoped assessment analytics |
+| GET | `/api/learning/{domain}` | Get a domain learning guide |
+| POST | `/api/careers/skill-match` | Experimental skill similarity suggestions |
+| POST | `/api/careers/analyze` | Analyse a career profile without saving |
+| POST | `/api/assessments` | Analyse and save an assessment |
+| GET | `/api/assessments` | List the authenticated user's saved assessments |
+| POST | `/api/coach/chat` | Get offline contextual career guidance |
+| POST | `/api/tools/resume-review` | Run a first-pass resume review |
+| POST | `/api/tools/interview-prep` | Generate interview practice questions |
+| POST | `/api/interview/analyze-frame` | Run ephemeral OpenCV webcam-frame analysis |
+
+For the complete request and response schemas, run the backend and open http://127.0.0.1:8000/docs.
+
+## Running tests and checks
+
+Run backend tests from the `backend/` directory with its virtual environment activated:
 
 ```powershell
 python -m pytest
 ```
 
-Frontend, from `frontend/`:
+Run frontend checks from the `frontend/` directory:
 
 ```powershell
 npm run lint
 npm run build
 ```
 
-## API endpoints
+The repository also has a GitHub Actions workflow that runs backend tests and frontend lint/build checks on pushes and pull requests.
 
-| Method | Endpoint | Purpose |
-|---|---|---|
-| GET | `/api/health` | Health check |\n| POST | `/api/auth/register` | Create an account |\n| POST | `/api/auth/login` | Sign in and receive an access token |\n| GET | `/api/auth/me` | Current authenticated account |\n| GET/PUT | `/api/profile` | Read or update personal profile |\n| GET | `/api/analytics/summary` | Account-owned progress analytics |\n| GET | `/api/learning/{domain}` | Domain learning guide |\n| POST | `/api/careers/skill-match` | Experimental TF-IDF skill similarity suggestions |
-| POST | `/api/careers/analyze` | Analyse a career profile without saving |
-| POST | `/api/assessments` | Analyse and save an assessment |
-| GET | `/api/assessments` | List recent saved assessments |
-| POST | `/api/coach/chat` | Offline contextual career coach |
-| POST | `/api/tools/resume-review` | First-pass resume review |
-| POST | `/api/tools/interview-prep` | Interview practice questions |
-| POST | `/api/interview/analyze-frame` | Ephemeral OpenCV webcam frame analysis |
+## Privacy and feature limitations
 
-## Account and security setup\n\nSet a unique secret before running outside local development. In PowerShell, set `$env:CPC_SECRET_KEY` to a long random value before starting Uvicorn. The built-in token lasts seven days; there is no refresh-token or server-side revocation flow yet. Passwords are hashed with PBKDF2-HMAC-SHA256. Configure HTTPS, rate limiting, backups, secret management, database migrations and a security review before public deployment. Google/GitHub OAuth is not enabled. Existing pre-account assessments are retained as legacy rows and are not visible in any new user's history.\n\n## Current limitations and next steps
+- Browser local storage is specific to the browser and device; it is not a cloud backup.
+- The resume review endpoint processes submitted text in the backend and does not persist that text.
+- Interview Studio's visual signals are approximate. They do not determine dishonesty, intent, emotion, confidence, or candidate suitability. Results can be affected by glasses, lighting, camera position, and model performance.
+- Face and hand landmark processing runs in the browser. Periodic camera snapshots are sent to the backend for OpenCV checks; the frame-analysis endpoint does not save those images. Camera access is opt-in and requires browser permission.
+- Voice interviews use browser speech recognition and text-to-speech where supported (Chrome/Edge recommended). Availability and privacy behaviour vary by browser; speech recognition may be processed by the browser vendor. The app does not store audio recordings.
+- Interview answer feedback is heuristic and considers features such as answer length, signposting, and examples. It does not verify factual or technical correctness and is not an objective hiring score.
+- Fullscreen is a focus requirement for the voice interview flow, not a proctoring or cheating-detection feature.
+- MediaPipe model assets are loaded by the browser from Google's model hosting/CDN on first use, so internet access is needed for that initial download.
+- Career skill maps are starter guides. Compare them with current job descriptions and advice from people working in the target field.
 
-- The application now has basic email/password accounts and ownership filtering for assessment history. Other features (for example interview reports, resume review and coach conversations) are not yet persisted or user-scoped. Do not treat this as production-ready authentication.
-- Browser local storage is device/browser-specific and is not a cloud backup.
-- The coach and career tools are deterministic/rule-based. A provider adapter and server-side secret management can be added later for live AI.
-- Interview Studio's visual signals are approximate and do not determine dishonesty, intent, emotion, confidence, or candidate suitability. Eye-gaze estimates are affected by glasses, lighting, camera position, and model performance.
-- Voice interviews use the browser Web Speech API where supported (Chrome/Edge recommended). Speech recognition availability and privacy behaviour vary by browser and may rely on an online service. A manual transcript editor is provided as a fallback.
-- Interview answer feedback is a transparent heuristic for answer length, signposting and examples. It does not grade factual or technical correctness, and must not be treated as an objective hiring score. Fullscreen is a focus requirement, not a proctoring or cheating-detection feature.
-- MediaPipe model assets are loaded by the browser from Google's model hosting/CDN on first use. The browser needs internet access for this initial download.
-- Face and hand landmark processing runs in the browser. Small periodic camera snapshots are sent to the local backend for OpenCV checks; the endpoint does not save images. The feature is opt-in and requires camera permission. Voice interview sessions use browser speech recognition and text-to-speech; no audio recording is stored by the app. Speech recognition may be processed by the browser vendor. The local practice summary uses heuristics only.
-- Career skill maps are starter maps and should be reviewed with current job descriptions and domain experts.
-- Production deployment should use PostgreSQL, migrations, environment-specific CORS, rate limits, monitoring, and security review.
+## Roadmap
+
+Potential next steps include PostgreSQL support, managed schema migrations, production CORS configuration, stronger token lifecycle controls, rate limiting, monitoring, and a security review before public deployment.
