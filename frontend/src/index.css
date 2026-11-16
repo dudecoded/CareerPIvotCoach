@@ -1074,3 +1074,31 @@ body{background:var(--cp-paper);color:var(--cp-ink)}
 .blog-art-three{background:linear-gradient(135deg,#0b2533,#39799e)!important}
 .blog-card:hover{border-color:#7ab9df!important;box-shadow:0 17px 38px rgba(10,65,100,.15)!important}
 @media(max-width:640px){.overview-slide{min-height:260px!important}.overview-carousel-head{gap:10px}.overview-carousel-head h2{font-size:26px!important}}
+
+/* 3D quote carousel — automatic, continuous orbit */
+.overview-carousel{background:#071923!important;border:1px solid #1d4055!important;padding:26px 24px 18px!important;overflow:hidden!important}
+.overview-carousel-head{align-items:center!important}
+.carousel-pause{flex:0 0 auto;border:1px solid #31566b;border-radius:999px;background:#12364b;color:#eaf6fc;padding:10px 16px;font-size:10px;font-weight:800;letter-spacing:.06em;transition:all .2s}
+.carousel-pause:hover{background:#1769aa;border-color:#4ba8df;transform:translateY(-2px)}
+.quote-carousel-stage{height:390px;position:relative;display:flex;align-items:center;justify-content:center;perspective:1100px;perspective-origin:50% 48%;overflow:hidden;isolation:isolate}
+.quote-carousel-stage:before{content:"";position:absolute;width:430px;height:230px;left:50%;top:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(35,119,174,.23),transparent 70%);filter:blur(15px);pointer-events:none}
+.quote-carousel-ring{position:relative;width:270px;height:320px;transform-style:preserve-3d;animation:careerQuoteOrbit 32s linear infinite;will-change:transform}
+.quote-carousel-stage.is-paused .quote-carousel-ring,.quote-carousel-stage:hover .quote-carousel-ring{animation-play-state:paused}
+.quote-carousel-card{position:absolute;inset:0;width:270px;height:320px;box-sizing:border-box;padding:20px 19px 18px;display:flex;flex-direction:column;justify-content:space-between;backface-visibility:hidden;border:1px solid rgba(255,255,255,.2);border-radius:5px;color:#081d2a;box-shadow:0 18px 45px rgba(0,0,0,.32);overflow:hidden;transition:filter .25s}
+.quote-carousel-card:after{content:"";position:absolute;width:170px;height:170px;border:1px solid rgba(8,29,42,.18);border-radius:50%;right:-72px;bottom:-72px;box-shadow:0 0 0 17px rgba(8,29,42,.035),0 0 0 35px rgba(8,29,42,.025);pointer-events:none}
+.quote-card-one{background:#2458bd;color:#fff;transform:rotateY(0deg) translateZ(255px)}
+.quote-card-two{background:#f5efd9;color:#1748ad;transform:rotateY(72deg) translateZ(255px)}
+.quote-card-three{background:#f0efed;color:#111d82;transform:rotateY(144deg) translateZ(255px)}
+.quote-card-four{background:#f3f4f1;color:#086b48;transform:rotateY(216deg) translateZ(255px)}
+.quote-card-five{background:#f4eee5;color:#101010;transform:rotateY(288deg) translateZ(255px)}
+.quote-card-number{font-size:9px;font-weight:900;letter-spacing:2px;opacity:.76}
+.quote-card-graphic{font-family:'Anton','Noto Sans JP',Impact,sans-serif;font-size:57px;line-height:.83;letter-spacing:-.035em;font-weight:900;position:relative;z-index:1}
+.quote-card-graphic b{font-weight:900}
+.quote-card-quote{font-size:16px;line-height:1.2;font-weight:900;letter-spacing:-.035em;margin:5px 0 0;position:relative;z-index:1}
+.quote-card-caption{font-size:9px;line-height:1.45;font-weight:700;opacity:.72;max-width:210px}
+.quote-carousel-footer{display:flex;justify-content:center;align-items:center;gap:9px;color:#86a4b5;font-size:8px;letter-spacing:1.5px;font-weight:800;padding:4px 0 0}
+.carousel-live-dot{width:6px;height:6px;border-radius:50%;background:#53b7e9;box-shadow:0 0 0 4px rgba(83,183,233,.12);animation:careerPulse 1.8s ease-in-out infinite}
+@keyframes careerQuoteOrbit{from{transform:rotateY(0deg)}to{transform:rotateY(360deg)}}
+@keyframes careerPulse{0%,100%{opacity:.55;transform:scale(.85)}50%{opacity:1;transform:scale(1.15)}}
+@media(max-width:700px){.quote-carousel-stage{height:350px;perspective:900px}.quote-carousel-ring{width:235px;height:285px}.quote-carousel-card{width:235px;height:285px;padding:17px}.quote-card-one{transform:rotateY(0deg) translateZ(220px)}.quote-card-two{transform:rotateY(72deg) translateZ(220px)}.quote-card-three{transform:rotateY(144deg) translateZ(220px)}.quote-card-four{transform:rotateY(216deg) translateZ(220px)}.quote-card-five{transform:rotateY(288deg) translateZ(220px)}.quote-card-graphic{font-size:49px}.quote-carousel-footer{font-size:7px;letter-spacing:1px}}
+@media(prefers-reduced-motion:reduce){.quote-carousel-ring,.carousel-live-dot{animation:none!important}.quote-carousel-stage{perspective:none}.quote-carousel-ring{transform:none!important}.quote-carousel-card{display:none}.quote-card-one{display:flex;position:relative;transform:none;width:min(270px,85vw);height:300px}.quote-carousel-stage{height:320px}}
