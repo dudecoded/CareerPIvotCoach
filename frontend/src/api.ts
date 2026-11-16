@@ -154,3 +154,12 @@ export function analyzeInterviewFrame(image_base64: string) {
     body: JSON.stringify({ image_base64 }),
   });
 }
+
+export type CommunityPost = { id:number; title:string; body:string; category:string; source_url:string|null; author_id:number; author_name:string; created_at:string; likes:number; comments_count:number; liked:boolean; saved:boolean };
+export type PostComment = { id:number; author:string; body:string; created_at:string };
+export function getPosts(saved=false) { return request<{posts:CommunityPost[]}>(`/api/posts${saved ? "?saved=true" : ""}`); }
+export function createPost(payload:{title:string;body:string;category:string;source_url?:string}) { return request<CommunityPost>("/api/posts",{method:"POST",body:JSON.stringify(payload)}); }
+export function togglePostLike(id:number) { return request<{liked:boolean;likes:number}>(`/api/posts/${id}/like`,{method:"POST"}); }
+export function togglePostSave(id:number) { return request<{saved:boolean}>(`/api/posts/${id}/save`,{method:"POST"}); }
+export function getPostComments(id:number) { return request<{comments:PostComment[]}>(`/api/posts/${id}/comments`); }
+export function addPostComment(id:number,body:string) { return request<PostComment>(`/api/posts/${id}/comments`,{method:"POST",body:JSON.stringify({body})}); }
