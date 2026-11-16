@@ -1,7 +1,5 @@
-from datetime import timezone
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field, HttpUrl
-from sqlalchemy import func
 from sqlalchemy.orm import Session
 from app.api.routes.auth import current_user
 from app.db.database import get_db
@@ -14,7 +12,7 @@ class PostCreate(BaseModel):
     title: str = Field(min_length=3, max_length=180)
     body: str = Field(min_length=20, max_length=12000)
     category: str = Field(default="Career notes", max_length=60)
-    source_url: str | None = Field(default=None, max_length=1000)
+    source_url: HttpUrl | None = None
 
 class CommentCreate(BaseModel):
     body: str = Field(min_length=1, max_length=2000)
@@ -44,7 +42,7 @@ def list_posts(saved: bool = False, category: str | None = None, limit: int = Qu
 
 @router.post("", status_code=201)
 def create_post(payload: PostCreate, db: Session = Depends(get_db), user: User = Depends(current_user)):
-    post = Post(author_id=user.id, title=payload.title.strip(), body=payload.body.strip(), category=payload.category.strip() or "Career notes", source_url=payload.source_url)
+    post = Post(author_id=user.id, title=payload.title.strip(), body=payload.body.strip(), category=payload.category.strip() or "Career notes", source_url=str(payload.source_url) if payload.source_url else None)
     db.add(post); db.commit(); db.refresh(post)
     return serialize_post(post, db, user.id)
 
