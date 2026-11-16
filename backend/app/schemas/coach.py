@@ -20,4 +20,4 @@ class CoachChatRequest(BaseModel):
 
 class CoachChatResponse(BaseModel):
     reply: str
-    mode: Literal["offline"] = "offline"
+    mode: Literal["live", "offline"] = "offline"
