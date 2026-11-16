@@ -46,7 +46,16 @@ def analyze_career(payload: AssessmentCreate) -> AssessmentResult:
     selected = {skill.strip().casefold() for skill in payload.skills if skill.strip()}
     matched = [skill for skill in target_skills if skill.casefold() in selected]
     missing = [skill for skill in target_skills if skill.casefold() not in selected]
-    score = round((len(matched) / len(target_skills)) * 100) if target_skills else 0
+    proficiency_weights = {"beginner": 0.35, "intermediate": 0.7, "advanced": 1.0}
+    weighted_total = 0.0
+    for skill in target_skills:
+        if skill.casefold() in selected:
+            level = next(
+                (value for key, value in payload.skill_proficiencies.items() if key.casefold() == skill.casefold()),
+                "Beginner",
+            )
+            weighted_total += proficiency_weights.get(level.casefold(), 0.35)
+    score = round((weighted_total / len(target_skills)) * 100) if target_skills else 0
 
     gaps = [
         SkillGap(
@@ -101,7 +110,7 @@ def analyze_career(payload: AssessmentCreate) -> AssessmentResult:
         recommendation=recommendation,
         roadmap=roadmap,
         score_note=(
-            "This is a skill-coverage estimate based only on the skills selected. "
+            "This is a skill-coverage estimate based on selected skills and self-reported proficiency. "
             "It is not a prediction of employability or hiring outcomes."
         ),
     )

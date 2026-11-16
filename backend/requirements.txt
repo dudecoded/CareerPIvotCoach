@@ -2,8 +2,12 @@ fastapi
 uvicorn[standard]
 sqlalchemy
 pydantic
+email-validator
 scikit-learn
 pandas
 numpy
 pytest
 httpx
+opencv-python-headless>=4.10,<5
+google-auth>=2.35,<3
+requests>=2.32,<3

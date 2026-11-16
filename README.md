@@ -1,185 +1,120 @@
-# Career Pivot Coach 🚀
+# CareerPivotCoach
 
-**Turn your existing skills into your next career.**
+CareerPivotCoach helps students and early-career professionals plan a transition into a target career. It combines a skills assessment, proficiency-weighted readiness estimate, gap analysis, a 90-day starter roadmap, progress tracking, an offline career coach, resume keyword review, and interview practice.
 
-Career Pivot Coach is an AI-powered career guidance platform designed to help students and early-career developers explore new career paths, identify skill gaps, evaluate their readiness, and build personalized learning roadmaps.
+> **Status:** Active development. Email/password accounts, account-owned assessment history, profile onboarding, domain learning guides and per-account analytics are now available on the feature branch. OAuth providers and production deployment hardening are not yet configured.
 
-Instead of wondering what to learn next, users can define their career goals and work toward them through structured, actionable steps.
+## Features
 
-> **Project status:** In development 🚧
+- **Career assessment:** choose a target role, record current skills, and rate each skill as Beginner, Intermediate, or Advanced.
+- **Weighted readiness estimate:** Beginner = 0.35, Intermediate = 0.70, Advanced = 1.0. The score is a planning signal, not a prediction of employability.\n- **Experimental ML skill similarity:** an unsupervised TF-IDF character n-gram endpoint suggests related skill terms. Suggestions require user confirmation and are not automatically counted as proficiency.
+- **Skill gap analysis:** compare selected skills with the target-role skill map.
+- **90-day roadmap:** review milestones and mark progress. Frontend preferences and task progress persist in browser local storage.
+- **Multi-user accounts:** email/password registration and login with password hashing and signed bearer tokens. Assessment records and analytics are scoped to the authenticated account.\n- **Personal profile:** save education, current role, target domain, interests, goals, learning preference and weekly study availability.\n- **Domain learning:** curated starter topics, portfolio projects and practice prompts for supported career domains.\n- **Assessment history and analytics:** view account-owned assessments and a readiness-over-time chart backed by SQLite.
+- **Offline career coach:** context-aware guidance for learning plans, projects, skill gaps, and internship preparation. No API key required.
+- **Resume review:** paste resume text for a first-pass target-role keyword and writing review. The text is processed by the local backend and is not persisted.
+- **Interview preparation:** generate role-specific practice questions and answer guidance.
+- **AI Interview Studio:** webcam preview with MediaPipe face and hand landmarks in the browser, plus periodic OpenCV face/eye-region and lighting checks through the local FastAPI backend.
+- **Fullscreen voice mock interviews:** fullscreen is required to start or resume a session; role-based question banks, spoken question playback, browser speech-to-text, editable transcripts, timed sessions, and a practice summary with transparent heuristic feedback.
 
-## ✨ Key Features
+The resume review and offline coach are rule-based features. They are not an ATS, a substitute for human career advice, or a live generative AI model.
 
-### 🎯 Personalized Career Planning
+## Tech stack
 
-* Define your current role and target career.
-* Specify your experience level and existing skills.
-* Set a career goal and receive guidance tailored to your starting point.
+- Frontend: React 19, TypeScript, Vite, custom CSS
+- Backend: Python, FastAPI, Pydantic, SQLAlchemy
+- Database: SQLite for local development
+- Computer vision: OpenCV (backend), MediaPipe Tasks Vision (browser)
+- Tests: pytest, FastAPI TestClient
 
-### 🧠 Skill Gap Analysis
-
-* Compare existing skills against the requirements of a target career.
-* Identify missing skills and areas for improvement.
-* Understand which skills to prioritize when planning your transition.
-
-### 📊 Career Readiness Assessment
-
-* Generate a readiness score based on available skill-matching logic.
-* Identify transferable skills.
-* Highlight areas that require further learning.
-
-*The readiness score is an indicative planning tool, not a prediction of employment outcomes.*
-
-### 🗺️ Personalized Learning Roadmaps
-
-* Break a career goal into manageable learning tasks.
-* Organize skill development into practical milestones.
-* Work toward becoming internship-ready or transitioning into a new role.
-
-### 💾 Progress Persistence
-
-* Save supported application state using browser local storage.
-* Preserve saved preferences and progress across page refreshes on the same browser.
-
-### 🤖 AI-Powered Career Coaching — In Development
-
-The project is being developed toward contextual AI career guidance, personalized recommendations, and interactive coaching.
-
-AI-powered functionality depends on the integrations implemented in the current version.
-
-## 🛠️ Tech Stack
-
-### Frontend
-
-* **React** — UI development
-* **TypeScript** — type safety
-* **Vite** — development server and build tooling
-* **Tailwind CSS** — styling
-* **Lucide React** — icons
-* **Recharts** — data visualization
-
-### Backend
-
-* **Python**
-* **FastAPI**
-* **Pydantic**
-* **SQLAlchemy**
-* **SQLite** for local development
-
-### AI Integration
-
-* Claude API integration is a potential component of the project's AI coaching functionality.
-
-*Technologies listed for backend and AI represent the intended stack; availability depends on the current implementation.*
-
-## 🏗️ Project Structure
+## Repository structure
 
 ```text
 CareerPIvotCoach/
 ├── frontend/
-│   ├── public/
 │   ├── src/
-│   │   ├── components/
-│   │   ├── features/
-│   │   ├── hooks/
-│   │   ├── lib/
-│   │   ├── pages/
-│   │   ├── services/
-│   │   ├── types/
 │   │   ├── App.tsx
-│   │   ├── index.css
-│   │   └── main.tsx
+│   │   ├── api.ts
+│   │   ├── InterviewStudio.tsx
+│   │   └── index.css
 │   └── package.json
 ├── backend/
-│   └── app/
-│       ├── main.py
-│       ├── database.py
-│       ├── models.py
-│       ├── schemas.py
-│       ├── routes/
-│       └── services/
+│   ├── app/
+│   │   ├── api/routes/
+│   │   ├── schemas/
+│   │   ├── services/
+│   │   ├── db/
+│   │   └── models/
+│   ├── tests/
+│   └── requirements.txt
 └── README.md
 ```
 
-The structure illustrates the intended organization and may differ from the current files as development progresses.
+## Run locally (Windows PowerShell)
 
-## 🚀 Getting Started
+Open two terminals from the repository root.
 
-### Prerequisites
-
-* Node.js
-* npm
-* Git
-
-Python is additionally required to run the backend when it is available on your branch.
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/dudecoded/CareerPIvotCoach.git
-cd CareerPIvotCoach
-```
-
-### 2. Install frontend dependencies
-
-```bash
-cd frontend
-npm install
-```
-
-### 3. Start the development server
-
-```bash
-npm run dev
-```
-
-Open the local URL displayed in your terminal, usually:
-
-```text
-http://localhost:5173
-```
-
-### 4. Build for production
-
-```bash
-npm run build
-```
-
-### 5. Run the linter
-
-```bash
-npm run lint
-```
-
-## ⚙️ Backend Setup
-
-When the backend application is available in your current branch, create a Python virtual environment from the repository root.
-
-**Windows PowerShell**
+### 1. Backend
 
 ```powershell
 cd backend
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
-python -m pip install fastapi uvicorn sqlalchemy pydantic
+python -m pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
-**macOS / Linux**
+API docs: http://127.0.0.1:8000/docs
 
-```bash
-cd backend
-python -m venv .venv
-source .venv/bin/activate
-python -m pip install fastapi uvicorn sqlalchemy pydantic
-uvicorn app.main:app --reload
+### 2. Frontend
+
+```powershell
+cd frontend
+npm ci
+npm run dev
 ```
 
-If the backend starts successfully, interactive API documentation is generally available at:
+Open the Vite URL shown in the terminal, usually http://localhost:5173.
 
-```text
-http://127.0.0.1:8000/docs
+Optional: set `VITE_API_BASE_URL` in a frontend `.env.local` if the API is hosted somewhere other than http://127.0.0.1:8000.
+
+## Run checks
+
+Backend, from `backend/` with the virtual environment activated:
+
+```powershell
+python -m pytest
 ```
 
-Additional dependencies may be required depending on the im
+Frontend, from `frontend/`:
 
+```powershell
+npm run lint
+npm run build
+```
+
+## API endpoints
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| GET | `/api/health` | Health check |\n| POST | `/api/auth/register` | Create an account |\n| POST | `/api/auth/login` | Sign in and receive an access token |\n| GET | `/api/auth/me` | Current authenticated account |\n| GET/PUT | `/api/profile` | Read or update personal profile |\n| GET | `/api/analytics/summary` | Account-owned progress analytics |\n| GET | `/api/learning/{domain}` | Domain learning guide |\n| POST | `/api/careers/skill-match` | Experimental TF-IDF skill similarity suggestions |
+| POST | `/api/careers/analyze` | Analyse a career profile without saving |
+| POST | `/api/assessments` | Analyse and save an assessment |
+| GET | `/api/assessments` | List recent saved assessments |
+| POST | `/api/coach/chat` | Offline contextual career coach |
+| POST | `/api/tools/resume-review` | First-pass resume review |
+| POST | `/api/tools/interview-prep` | Interview practice questions |
+| POST | `/api/interview/analyze-frame` | Ephemeral OpenCV webcam frame analysis |
+
+## Account and security setup\n\nSet a unique secret before running outside local development. In PowerShell, set `$env:CPC_SECRET_KEY` to a long random value before starting Uvicorn. The built-in token lasts seven days; there is no refresh-token or server-side revocation flow yet. Passwords are hashed with PBKDF2-HMAC-SHA256. Configure HTTPS, rate limiting, backups, secret management, database migrations and a security review before public deployment. Google/GitHub OAuth is not enabled. Existing pre-account assessments are retained as legacy rows and are not visible in any new user's history.\n\n## Current limitations and next steps
+
+- The application now has basic email/password accounts and ownership filtering for assessment history. Other features (for example interview reports, resume review and coach conversations) are not yet persisted or user-scoped. Do not treat this as production-ready authentication.
+- Browser local storage is device/browser-specific and is not a cloud backup.
+- The coach and career tools are deterministic/rule-based. A provider adapter and server-side secret management can be added later for live AI.
+- Interview Studio's visual signals are approximate and do not determine dishonesty, intent, emotion, confidence, or candidate suitability. Eye-gaze estimates are affected by glasses, lighting, camera position, and model performance.
+- Voice interviews use the browser Web Speech API where supported (Chrome/Edge recommended). Speech recognition availability and privacy behaviour vary by browser and may rely on an online service. A manual transcript editor is provided as a fallback.
+- Interview answer feedback is a transparent heuristic for answer length, signposting and examples. It does not grade factual or technical correctness, and must not be treated as an objective hiring score. Fullscreen is a focus requirement, not a proctoring or cheating-detection feature.
+- MediaPipe model assets are loaded by the browser from Google's model hosting/CDN on first use. The browser needs internet access for this initial download.
+- Face and hand landmark processing runs in the browser. Small periodic camera snapshots are sent to the local backend for OpenCV checks; the endpoint does not save images. The feature is opt-in and requires camera permission. Voice interview sessions use browser speech recognition and text-to-speech; no audio recording is stored by the app. Speech recognition may be processed by the browser vendor. The local practice summary uses heuristics only.
+- Career skill maps are starter maps and should be reviewed with current job descriptions and domain experts.
+- Production deployment should use PostgreSQL, migrations, environment-specific CORS, rate limits, monitoring, and security review.

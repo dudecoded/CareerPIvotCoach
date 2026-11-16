@@ -109,6 +109,7 @@ export default function VoiceInterview({ targetRole, startCamera, cameraActive, 
   const [seconds, setSeconds] = useState(0)
   const [cameraSamples, setCameraSamples] = useState({ total: 0, face: 0, screen: 0, hands: 0 })
   const [notice, setNotice] = useState('')
+  const [isRoomFullscreen, setIsRoomFullscreen] = useState(false)
   const [interim, setInterim] = useState('')
   const recognitionRef = useRef<Recognition | null>(null)
   const roomRef = useRef<HTMLElement>(null)
@@ -116,7 +117,10 @@ export default function VoiceInterview({ targetRole, startCamera, cameraActive, 
   const [questionsForSession, setQuestionsForSession] = useState<string[]>([])
   const currentQuestion = questionsForSession[questionIndex] ?? ''
   const cameraMetricsRef = useRef(cameraMetrics)
-  cameraMetricsRef.current = cameraMetrics
+
+  useEffect(() => {
+    cameraMetricsRef.current = cameraMetrics
+  }, [cameraMetrics])
 
   useEffect(() => {
     if (!liveVideoRef.current || !cameraStream) return
@@ -138,7 +142,9 @@ export default function VoiceInterview({ targetRole, startCamera, cameraActive, 
 
   useEffect(() => {
     const handleFullscreen = () => {
-      if (active && document.fullscreenElement !== roomRef.current) {
+      const isFullscreen = document.fullscreenElement === roomRef.current
+      setIsRoomFullscreen(isFullscreen)
+      if (active && !isFullscreen) {
         setActive(false)
         setPaused(true)
         setListening(false)
@@ -259,7 +265,16 @@ export default function VoiceInterview({ targetRole, startCamera, cameraActive, 
   }
 
   const remaining = Math.max(0, timeLimit * 60 - seconds)
-  useEffect(() => { if (active && remaining === 0) endSession() }, [active, remaining])
+  useEffect(() => {
+    if (!active || remaining !== 0) return
+    const timer = window.setTimeout(() => {
+      stopListening()
+      setActive(false)
+      setFinished(true)
+      window.speechSynthesis?.cancel()
+    }, 0)
+    return () => window.clearTimeout(timer)
+  }, [active, remaining])
   const average = transcript.length ? Math.round(transcript.reduce((sum, item) => sum + item.score.overall, 0) / transcript.length) : 0
   const mmss = `${Math.floor(remaining / 60).toString().padStart(2, '0')}:${(remaining % 60).toString().padStart(2, '0')}`
 
@@ -297,7 +312,7 @@ export default function VoiceInterview({ targetRole, startCamera, cameraActive, 
         <div className="voice-report-details"><h3>{transcript.length} answers recorded · {Math.floor(seconds / 60)}m {seconds % 60}s elapsed</h3><div className="voice-camera-report"><strong>Camera observations during interview</strong><span>Face visible: {cameraSamples.total ? Math.round(cameraSamples.face / cameraSamples.total * 100) : 0}% of samples</span><span>Generally screen-facing: {cameraSamples.total ? Math.round(cameraSamples.screen / cameraSamples.total * 100) : 0}% of samples</span><span>Hands visible: {cameraSamples.total ? Math.round(cameraSamples.hands / cameraSamples.total * 100) : 0}% of samples</span><small>Approximate observations only; not confidence, emotion, honesty or candidate-quality scores.</small></div><p>This is heuristic practice feedback based on answer length, signposting and use of examples. It does not verify technical correctness or replace expert evaluation.</p>
           {transcript.map((item, index) => <article className="voice-answer-review" key={index}><strong>Q{index + 1}. {item.question}</strong><p>{item.answer}</p><div><span>{item.score.words} words</span><span>Structure {item.score.structure}/100</span><span>Examples {item.score.specificity}/100</span><b>{item.score.overall}/100</b></div></article>)}
           <button className="primary-button" onClick={() => { setFinished(false); setPaused(false); setTranscript([]); setQuestionIndex(0); setAnswer(''); setSeconds(0); }}><RotateCcw size={14}/> Set up another interview</button>
-          {document.fullscreenElement === roomRef.current && <button className="voice-text-button" onClick={() => void document.exitFullscreen()}>Finish & exit fullscreen</button>}
+          {isRoomFullscreen && <button className="voice-text-button" onClick={() => void document.exitFullscreen()}>Finish & exit fullscreen</button>}
         </div>
       </div>}
       {notice && !active && !finished && <p className="voice-notice" role="status">{notice}</p>}
