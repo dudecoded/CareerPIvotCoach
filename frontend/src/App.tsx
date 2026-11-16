@@ -110,6 +110,8 @@ function getInitialSkillProficiencies(): Record<string, SkillProficiency> {
 function App() {
   const [compassRotation, setCompassRotation] = useState(0)
   const [investigationPhrase, setInvestigationPhrase] = useState('TRACE YOUR STRENGTHS')
+  const [name, setName] = useState(() => readSavedState().name ?? 'Uzair')
+  const [currentRole, setCurrentRole] = useState(() => readSavedState().currentRole ?? 'Student')
   useEffect(() => { const phrases = ['TRACE YOUR STRENGTHS', 'CONNECT THE CLUES', 'DISCOVER YOUR NEXT ROLE', 'BUILD YOUR CAREER PATH']; let index = 0; const timer = window.setInterval(() => { index = (index + 1) % phrases.length; setInvestigationPhrase(phrases[index]); }, 2600); return () => window.clearInterval(timer); }, [])
   const [tab, setTab] = useState<Tab>('Overview')
   const [carouselPaused, setCarouselPaused] = useState(false)
@@ -216,8 +218,6 @@ function App() {
   const [analytics, setAnalytics] = useState<{ assessment_count: number; latest: number | null; readiness_history: { date: string; score: number; target_role: string }[]; matched_skill_counts: { date: string; count: number }[] } | null>(null)
   const [recommendations, setRecommendations] = useState<{ career_paths: string[]; projects: string[]; courses: { title: string; provider: string; url: string; reason: string }[]; books: { title: string; author: string; reason: string }[]; creators: { name: string; platform: string; focus: string; url: string }[]; trajectory: string[]; quote: { text: string; author: string } } | null>(null)
   const [domainContent, setDomainContent] = useState<{ domain: string; overview: string; topics: string[]; projects: string[]; practice: string[] } | null>(null)
-  const [name, setName] = useState(() => readSavedState().name ?? 'Uzair')
-  const [currentRole, setCurrentRole] = useState(() => readSavedState().currentRole ?? 'Student')
   const [target, setTarget] = useState<Career>(() => readSavedState().target ?? 'Frontend Developer')
   const [experience, setExperience] = useState(() => readSavedState().experience ?? 'Beginner')
   const [selectedSkills, setSelectedSkills] = useState<string[]>(() => readSavedState().selectedSkills ?? DEFAULT_SKILLS)
